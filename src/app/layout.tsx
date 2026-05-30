@@ -1,12 +1,52 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer"; // 👈 ایمپورت فوتر جدید
+import Footer from "@/components/Footer";
 
+// 🪄 تنظیمات پرفکت و جامع سئو برای کل فروشگاه
 export const metadata: Metadata = {
-  title: "فروشگاه قلاب جادویی | سفارش آنلاین بافتنی و دسته گل کاموایی",
-  description: "خرید آنلاین زیباترین محصولات بافتنی دست‌ساز، عروسک کاموایی، دسته گل و باکس گل بافتنی با بهترین قیمت. سفارش انواع بافتنی فانتزی و دخترانه در فروشگاه قلاب جادویی.",
-  keywords: "خرید بافتنی, سفارش آنلاین عروسک کاموایی, قیمت دسته گل بافتنی, باکس گل کاموایی, فروشگاه قلاب جادویی, بافتنی فانتزی دخترانه, هدیه خاص کاموایی",
+  title: {
+    template: "%s | قلاب جادویی", // اگر صفحه‌ای تایتل داشت، اینطوری نشون میده (مثلاً: تماس با ما | قلاب جادویی)
+    default: "فروشگاه قلاب جادویی | خرید آنلاین دست‌بافت‌های فانتزی و عروسک کاموایی", // تایتل پیش‌فرض
+  },
+  description: "سفارش و خرید آنلاین زیباترین دست‌بافت‌های فانتزی، دسته گل جاودان، عروسک‌های آمیگورومی و دکوری‌های کاموایی. خلق شده توسط یک تیم حرفه‌ای از هنرمندان با تضمین کیفیت و ارسال سریع.",
+  keywords: [
+    "خرید بافتنی", 
+    "عروسک آمیگورومی", 
+    "دسته گل کاموایی", 
+    "خرید هدیه خاص", 
+    "قلاب جادویی", 
+    "خرید آنلاین کادو", 
+    "دکوری فانتزی",
+    "گیفت دست‌ساز"
+  ],
+  openGraph: {
+    title: "فروشگاه قلاب جادویی | دنیای فانتزی دست‌بافت‌ها",
+    description: "زیباترین عروسک‌های کاموایی و باکس‌های گل جادویی که توسط یک تیم حرفه‌ای برای شما بافته شده‌اند. هدیه‌ای بی‌نظیر که هرگز پژمرده نمی‌شود!",
+    url: "https://gholabjadooi.ir",
+    siteName: "قلاب جادویی",
+    images: [
+      {
+        url: "/seo-products-banner.webp", // همون عکس جذابی که تو پوشه public گذاشتی
+        width: 1200,
+        height: 630,
+        alt: "محصولات فروشگاه قلاب جادویی",
+      },
+    ],
+    locale: "fa_IR",
+    type: "website",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -16,15 +56,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl">
-      <body className="antialiased font-sans min-h-screen flex flex-col">
+      <body className="font-sans antialiased bg-soft-blue text-text-dark">
+        {/* نوبار هوشمندی که ساختیم */}
         <Navbar />
         
-        {/* محتوای صفحات سایت کل فضای وسط رو پر می‌کنه */}
-        <main className="flex-grow">
+        {/* محتوای متغیر هر صفحه */}
+        <main className="min-h-screen">
           {children}
         </main>
-
-        {/* 👈 اضافه شدن فوتر به انتهای سایت */}
+        
         <Footer />
       </body>
     </html>

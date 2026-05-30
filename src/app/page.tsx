@@ -2,7 +2,7 @@ import Hero from "@/components/Hero";
 import AboutSection from "@/components/AboutSection";
 import Categories from "@/components/Categories";
 import BestSellers from "@/components/BestSellers"; 
-import HowItWorks from "@/components/HowItWorks";
+import StoreProductsOverview from "@/components/StoreProductsOverview";
 import { supabase } from "@/lib/supabase"; 
 
 // دریافت لحظه‌ای اطلاعات از دیتابیس (سرور ساید - ضد تحریم و فیلتر)
@@ -59,10 +59,10 @@ export default async function Home() {
       />
       <Hero />
       <AboutSection />
-      {/* پاس دادن اطلاعات آماده شده به کامپوننت‌ها */}
       <Categories categories={categories || []} />
       <BestSellers products={products || []} />
-      <HowItWorks />
+      {/* کامپوننت جدید و سئومحور جایگزین شد */}
+      <StoreProductsOverview />
     </div>
   );
 }

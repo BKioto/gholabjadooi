@@ -1,61 +1,161 @@
+"use client";
+
 import Link from "next/link";
-import { Phone, MessageCircle } from "lucide-react";
+import { Phone, Lock, Code2, ShoppingBag, Info, HelpCircle } from "lucide-react";
 
 export default function Footer() {
+  // دریافت سال جاری خورشیدی
+  const currentYear = new Date().toLocaleDateString('fa-IR', { year: 'numeric' });
+
   return (
-    <footer className="bg-white border-t-4 border-soft-blue mt-20 pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-12 text-center md:text-right">
+    <footer className="bg-white border-t border-gray-100 relative overflow-hidden mt-auto">
+      {/* هاله‌های نوری پس‌زمینه برای دیزاین پرمیوم */}
+      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary-pink/5 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+      <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-mint-green/10 rounded-full blur-3xl -z-10 pointer-events-none"></div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           
-          {/* ستون اول: معرفی تیم و برند */}
-          <div className="flex flex-col items-center md:items-start gap-4">
-            <Link href="/" className="flex items-center gap-2">
-              <img src="https://api.iconify.design/fluent/magic-wand-24-filled.svg?color=%23ff6b81" alt="قلاب جادویی" className="w-8 h-8" />
-              <h3 className="text-3xl font-display text-primary-pink font-bold">قلاب جادویی</h3>
+          {/* ستون اول: درباره برند و پشتیبانی (سئو شده) */}
+          <div className="flex flex-col gap-6 lg:col-span-1">
+            <Link href="/" className="flex items-center gap-3 group w-fit">
+              <div className="bg-primary-pink/10 p-2.5 rounded-2xl group-hover:bg-primary-pink/20 transition-colors">
+                <img src="https://api.iconify.design/fluent/magic-wand-24-filled.svg?color=%23FF6B81" alt="قلاب جادویی" className="w-7 h-7" />
+              </div>
+              <span className="font-display text-3xl text-primary-pink font-bold">قلاب جادویی</span>
             </Link>
-            <p className="text-text-dark/70 font-sans leading-relaxed text-justify">
-              خلق زیباترین و خاص‌ترین دست‌بافت‌های فانتزی. یک اثر هنری ماندگار، بافته شده با عشق و ظرافت توسط تیم حرفه‌ای و هنرمند ما برای خلق لحظات شیرین شما.
+            
+            {/* متن سئو شده برای معرفی خدمات قلاب‌بافی */}
+            <p className="text-gray-500 font-sans leading-relaxed text-sm text-justify">
+              فروشگاه تخصصی قلاب‌بافی و دست‌بافت‌های فانتزی. ما با ترکیب هنر و بهترین الیاف ضدحساسیت، انواع عروسک‌های آمیگورومی (Amigurumi)، دسته گل‌های کاموایی جاودان و دکوریجات خاص را طراحی و تولید می‌کنیم. خرید مستقیم و بی‌واسطه از تیم هنرمندان.
             </p>
-          </div>
-
-          {/* ستون دوم: نقشه سایت و لینک‌های مفید (آپدیت شده با تمام صفحات) */}
-          <div className="flex flex-col items-center md:items-start gap-4">
-            <h4 className="text-xl font-bold text-text-dark mb-2">لینک‌های مفید</h4>
-            <div className="grid grid-cols-2 gap-x-8 gap-y-3 font-sans w-full max-w-xs">
-              <Link href="/shop" className="text-text-dark/70 hover:text-primary-pink transition-colors">فروشگاه</Link>
-              <Link href="/track-order" className="text-text-dark/70 hover:text-primary-pink transition-colors">پیگیری سفارش</Link>
-              <Link href="/about" className="text-text-dark/70 hover:text-primary-pink transition-colors">درباره ما</Link>
-              <Link href="/faq" className="text-text-dark/70 hover:text-primary-pink transition-colors">سوالات متداول</Link>
-              <Link href="/contact" className="text-text-dark/70 hover:text-primary-pink transition-colors">تماس با ما</Link>
-              <Link href="/terms" className="text-text-dark/70 hover:text-primary-pink transition-colors">قوانین و مقررات</Link>
+            
+            {/* شماره تماس پشتیبانی */}
+            <div className="flex items-center gap-3 mt-2 bg-gray-50 p-3 rounded-xl border border-gray-100 w-fit">
+              <Phone className="w-5 h-5 text-soft-blue shrink-0" />
+              <div className="flex flex-col">
+                <span className="text-[10px] text-gray-400 font-bold">تلفن پشتیبانی</span>
+                <span className="font-sans font-bold text-text-dark text-sm" dir="ltr">0992 423 0576</span>
+              </div>
             </div>
           </div>
 
-          {/* ستون سوم: ارتباط با پشتیبانی */}
-          <div className="flex flex-col items-center md:items-start gap-4">
-            <h4 className="text-xl font-bold text-text-dark mb-2">ارتباط با پشتیبانی</h4>
+          {/* ستون دوم: شبکه‌های اجتماعی و پیام‌رسان‌ها */}
+          <div className="flex flex-col gap-6">
+            <h3 className="font-bold text-xl text-text-dark relative w-fit">
+              پشتیبانی آنلاین
+              <span className="absolute -bottom-2 right-0 w-1/2 h-1 bg-primary-pink rounded-full"></span>
+            </h3>
+            <p className="text-sm text-gray-500 font-sans">
+              سریع‌ترین راه برای پیگیری سفارشات، ارتباط با ما در پیام‌رسان‌های داخلی است.
+            </p>
             
-            <div className="flex items-center gap-2 text-text-dark/70 font-sans">
-              <Phone className="w-5 h-5 text-soft-blue" />
-              <span dir="ltr">۰۲۱ - ۱۲۳۴۵۶۷۸</span>
-            </div>
-            
-            <div className="mt-2">
-              <a href="#" className="bg-mint-green/20 p-3 rounded-2xl text-text-dark hover:bg-mint-green transition-all shadow-sm flex items-center gap-2 group w-fit">
-                <MessageCircle className="w-5 h-5 text-mint-green group-hover:text-text-dark transition-colors" />
-                <span className="font-sans text-sm font-bold">پشتیبانی آنلاین در بله</span>
+            <div className="flex gap-4 mt-2">
+              {/* لینک بله */}
+              <a href="https://ble.ir/gholabjadooi" target="_blank" rel="noopener noreferrer" className="group">
+                <div className="bg-gray-50 border border-gray-100 p-3.5 rounded-2xl flex items-center justify-center hover:-translate-y-2 hover:shadow-lg transition-all duration-300 w-14 h-14">
+                  <img src="/bale-logo.webp" alt="بله" className="w-full h-full object-contain group-hover:scale-110 transition-transform" />
+                </div>
               </a>
+
+              {/* لینک ایتا */}
+              <a href="https://eitaa.com/gholabjadooi" target="_blank" rel="noopener noreferrer" className="group">
+                <div className="bg-gray-50 border border-gray-100 p-3.5 rounded-2xl flex items-center justify-center hover:-translate-y-2 hover:shadow-lg transition-all duration-300 w-14 h-14">
+                  <img src="/eitaa-logo.webp" alt="ایتا" className="w-full h-full object-contain group-hover:scale-110 transition-transform" />
+                </div>
+              </a>
+            </div>
+          </div>
+
+          {/* ستون سوم: دسترسی سریع */}
+          <div className="flex flex-col gap-6">
+            <h3 className="font-bold text-xl text-text-dark relative w-fit">
+              دسترسی سریع
+              <span className="absolute -bottom-2 right-0 w-1/2 h-1 bg-primary-pink rounded-full"></span>
+            </h3>
+            <ul className="space-y-3 text-sm text-gray-500 font-medium font-sans">
+              <li>
+                <Link href="/shop" className="hover:text-primary-pink transition-all flex items-center gap-2">
+                  <ShoppingBag className="h-4 w-4" /> فروشگاه محصولات
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="hover:text-primary-pink transition-all flex items-center gap-2">
+                  <Info className="h-4 w-4" /> درباره تیم ما
+                </Link>
+              </li>
+              <li>
+                <Link href="/faq" className="hover:text-primary-pink transition-all flex items-center gap-2">
+                  <HelpCircle className="h-4 w-4" /> سوالات متداول
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-primary-pink transition-all flex items-center gap-2">
+                  <Phone className="h-4 w-4" /> تماس با ما
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* ستون چهارم: نمادهای اعتماد با تصاویر واقعی */}
+          <div className="flex flex-col gap-6">
+            <h3 className="font-bold text-xl text-text-dark relative w-fit">
+              نمادهای اعتماد
+              <span className="absolute -bottom-2 right-0 w-1/2 h-1 bg-primary-pink rounded-full"></span>
+            </h3>
+            <p className="text-sm text-gray-500 font-sans">خرید امن و مطمئن زیر نظر مراجع قانونی.</p>
+            
+            <div className="flex gap-4 mt-2">
+              {/* تصویر اینماد */}
+              <div className="bg-white border-2 border-gray-100 p-2 rounded-2xl shadow-sm flex items-center justify-center w-24 h-24 hover:border-primary-pink/30 hover:shadow-md transition-all cursor-pointer overflow-hidden group">
+                <img src="/enamad.webp" alt="نماد اعتماد الکترونیکی" className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
+              </div>
+              
+              {/* تصویر ساماندهی */}
+              <div className="bg-white border-2 border-gray-100 p-2 rounded-2xl shadow-sm flex items-center justify-center w-24 h-24 hover:border-soft-blue/50 hover:shadow-md transition-all cursor-pointer overflow-hidden group">
+                <img src="/samandehi.webp" alt="نشان ملی ثبت رسانه‌های دیجیتال" className="w-full h-full object-contain group-hover:scale-105 transition-transform" />
+              </div>
             </div>
           </div>
 
         </div>
 
-        {/* کپی رایت */}
-        <div className="border-t border-soft-blue/50 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-text-dark/60 font-sans">
-          <p>© {new Date().getFullYear()} تمامی حقوق برای تیم قلاب جادویی محفوظ است.</p>
-          <p className="flex items-center gap-1 font-bold">
-            طراحی و توسعه توسط تیم حرفه‌ای
-          </p>
+        {/* --- نوار پایین فوتر (Bottom Bar) --- */}
+        <div className="mt-16 pt-8 border-t border-gray-100 flex flex-col lg:flex-row justify-between items-center gap-6">
+          
+          {/* کپی‌رایت */}
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-gray-400 font-sans">
+              تمامی حقوق محفوظ است © {currentYear}
+            </p>
+            <a href="/admin/login" className="text-gray-300 hover:text-primary-pink transition-colors p-1 opacity-50 hover:opacity-100" title="ورود مدیریت">
+              <Lock className="h-3 w-3" />
+            </a>
+          </div>
+          
+          {/* --- امضای کیا دِو (KiyaDev Signature) --- */}
+          <a 
+            href="https://kiyadev.ir" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center gap-3 bg-gray-50 hover:bg-slate-900 border border-gray-100 px-4 py-2 rounded-xl transition-all duration-300"
+          >
+            <div className="flex flex-col items-end">
+              <span className="text-[10px] text-gray-400 font-medium group-hover:text-gray-400/80">
+                طراحی و مهندسی توسط
+              </span>
+              <span className="text-xs font-bold text-gray-700 group-hover:text-white flex items-center gap-1">
+                KiyaDev Team
+                <Code2 className="h-3 w-3 text-primary-pink group-hover:text-pink-400" />
+              </span>
+            </div>
+            
+            <div className="h-8 w-8 bg-white group-hover:bg-white/10 rounded-lg flex items-center justify-center shadow-sm transition-colors">
+               <Code2 className="h-4 w-4 text-gray-600 group-hover:text-white" />
+            </div>
+          </a>
+          {/* -------------------------------------- */}
+
         </div>
       </div>
     </footer>

@@ -2,26 +2,27 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation"; // 👈 اضافه شد برای تشخیص صفحه فعلی
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 
 export default function Navbar() {
-  // استیت‌های مربوط به منوی موبایل و جلوگیری از ارور رندر Next.js
   const [isOpen, setIsOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  
+  // خواندن مسیر فعلی مرورگر
+  const pathname = usePathname(); 
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
-  // دریافت زنده تعداد کل محصولات از حافظه Zustand
+  // دریافت تعداد محصولات سبد خرید
   const totalItems = useCartStore((state) => state.getTotalItems());
 
-  // این ترفند باعث میشه تا وقتی سایت کامل لود نشده، عدد سبد خرید رندر نشه تا ارور نگیریم
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // لیست تمام صفحاتی که ساخته شده
   const navLinks = [
     { name: "صفحه اصلی", path: "/" },
     { name: "فروشگاه", path: "/shop" },
@@ -31,50 +32,68 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-white sticky top-0 z-50 shadow-sm border-b border-gray-100">
+    <nav className="bg-white/85 backdrop-blur-md sticky top-0 z-50 shadow-sm border-b border-gray-100 transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           
-          {/* لوگو و نام برند با آیکون حرفه‌ای CDN */}
-          <Link href="/" className="flex items-center gap-2">
-            <img src="https://api.iconify.design/fluent/magic-wand-24-filled.svg?color=%23ff6b81" alt="قلاب جادویی" className="w-8 h-8" />
-            <span className="font-display text-2xl text-primary-pink font-bold">قلاب جادویی</span>
+          {/* لوگو و نام برند */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="bg-primary-pink/10 p-2.5 rounded-2xl group-hover:bg-primary-pink/20 transition-colors shadow-inner">
+              <img src="https://api.iconify.design/fluent/magic-wand-24-filled.svg?color=%23FF6B81" alt="قلاب جادویی" className="w-6 h-6 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-300" />
+            </div>
+            <span className="font-display text-2xl text-primary-pink font-bold tracking-wide">قلاب جادویی</span>
           </Link>
 
-          {/* منوی دسکتاپ (در موبایل مخفی می‌شه) */}
+          {/* منوی دسکتاپ هوشمند */}
           <div className="hidden md:flex items-center gap-8">
-            {navLinks.map((link, index) => (
-              <Link 
-                key={index} 
-                href={link.path}
-                className="text-text-dark/80 hover:text-primary-pink font-sans font-bold transition-colors text-sm lg:text-base"
-              >
-                {link.name}
-              </Link>
-            ))}
+            {navLinks.map((link, index) => {
+              // جادوی هوشمند: اگر در صفحه اصلی هستیم، لینک صفحه اصلی مخفی می‌شود
+              if (pathname === '/' && link.path === '/') return null;
+              
+              // تشخیص صفحه فعال برای سایر لینک‌ها
+              const isActive = pathname === link.path || (link.path !== '/' && pathname.startsWith(link.path));
+
+              return (
+                <Link 
+                  key={index} 
+                  href={link.path}
+                  className={`font-sans font-bold transition-colors text-sm lg:text-base relative group py-2 ${
+                    isActive ? "text-primary-pink" : "text-text-dark/70 hover:text-primary-pink"
+                  }`}
+                >
+                  {link.name}
+                  {/* خط زیرین متحرک برای نشان دادن صفحه فعال */}
+                  {isActive && (
+                    <motion.div 
+                      layoutId="activeNavIndicator"
+                      className="absolute bottom-0 left-0 right-0 h-1 bg-primary-pink rounded-t-full"
+                    />
+                  )}
+                </Link>
+              );
+            })}
           </div>
 
-          {/* بخش سمت چپ: سبد خرید و دکمه همبرگری موبایل */}
+          {/* بخش سمت چپ: سبد خرید و منوی موبایل */}
           <div className="flex items-center gap-4">
             
-            {/* دکمه سبد خرید متصل به Zustand */}
-            <Link href="/cart" className="relative p-2 bg-primary-pink/10 rounded-xl hover:bg-primary-pink/20 transition-colors group">
-              <img src="https://api.iconify.design/fluent/shopping-bag-24-filled.svg?color=%23ff6b81" alt="سبد خرید" className="w-6 h-6 group-hover:scale-110 transition-transform" />
+            {/* دکمه سبد خرید */}
+            <Link href="/cart" className="relative p-3 bg-gray-50 rounded-2xl hover:bg-primary-pink/10 transition-colors group border border-gray-100 hover:border-primary-pink/30 shadow-sm">
+              <img src="https://api.iconify.design/fluent/shopping-bag-24-filled.svg?color=%23374151" alt="سبد خرید" className="w-6 h-6 group-hover:scale-110 transition-transform" />
               
-              {/* بج نمایش تعداد محصولات داخل سبد (فقط اگر محصولی باشد و صفحه لود شده باشد) */}
               {mounted && totalItems > 0 && (
-                <span className="absolute -top-2 -right-2 bg-mint-green text-text-dark text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full border-2 border-white animate-pulse">
+                <span className="absolute -top-2 -right-2 bg-primary-pink text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full border-2 border-white shadow-md animate-bounce">
                   {totalItems}
                 </span>
               )}
             </Link>
 
-            {/* دکمه همبرگری مخصوص موبایل (در دسکتاپ مخفی می‌شه) */}
+            {/* دکمه همبرگری موبایل */}
             <button 
-              className="md:hidden p-2 text-text-dark hover:bg-gray-50 rounded-xl transition-colors"
+              className="md:hidden p-3 text-text-dark bg-gray-50 hover:bg-gray-100 rounded-2xl transition-colors border border-gray-100"
               onClick={toggleMenu}
             >
-              {isOpen ? <X className="w-7 h-7" /> : <Menu className="w-7 h-7" />}
+              {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
             
           </div>
@@ -82,26 +101,36 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* منوی بازشونده موبایل (با انیمیشن نرم) */}
+      {/* منوی بازشونده موبایل */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="md:hidden bg-white border-b border-gray-100 overflow-hidden"
+            className="md:hidden bg-white/95 backdrop-blur-2xl border-b border-gray-100 overflow-hidden shadow-2xl absolute w-full"
           >
-            <div className="px-4 pt-2 pb-6 flex flex-col gap-2">
-              {navLinks.map((link, index) => (
-                <Link 
-                  key={index} 
-                  href={link.path}
-                  onClick={() => setIsOpen(false)} // وقتی روی لینک کلیک شد، منو بسته بشه
-                  className="text-text-dark/80 hover:text-primary-pink hover:bg-primary-pink/5 font-sans font-bold p-3 rounded-xl transition-colors block text-right"
-                >
-                  {link.name}
-                </Link>
-              ))}
+            <div className="px-4 pt-4 pb-8 flex flex-col gap-3">
+              {navLinks.map((link, index) => {
+                // در موبایل هم اگر خانه هستیم، کشوی خانه مخفی شود
+                if (pathname === '/' && link.path === '/') return null;
+                const isActive = pathname === link.path;
+
+                return (
+                  <Link 
+                    key={index} 
+                    href={link.path}
+                    onClick={() => setIsOpen(false)}
+                    className={`font-sans font-bold p-4 rounded-2xl transition-all block text-right border ${
+                      isActive 
+                        ? "bg-primary-pink/10 text-primary-pink border-primary-pink/20 shadow-inner" 
+                        : "bg-gray-50 text-text-dark/80 hover:bg-gray-100 border-transparent"
+                    }`}
+                  >
+                    {link.name}
+                  </Link>
+                );
+              })}
             </div>
           </motion.div>
         )}

@@ -1,91 +1,84 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
-import { HeartHandshake, Sparkles, CheckCircle2 } from "lucide-react";
+import { Heart, Star, ShieldCheck, Smile } from "lucide-react";
 
 export default function AboutSection() {
   return (
-    <section className="py-20 bg-white overflow-hidden relative">
-      {/* یه المان تزئینی برای پس‌زمینه */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-primary-pink/5 rounded-full blur-3xl -z-10 transform translate-x-1/2 -translate-y-1/2"></div>
-      
+    <section className="py-24 bg-white relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl sm:text-5xl font-display text-text-dark mb-4">
+            درباره <span className="text-primary-pink">قلاب جادویی</span>
+          </h2>
+          <p className="text-lg font-sans text-gray-500 max-w-2xl mx-auto">
+            ما یک تیم حرفه‌ای از هنرمندان بافنده هستیم که با ترکیب هنر، عشق و کاموا، رویاهای فانتزی شما را به واقعیت تبدیل می‌کنیم.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           
-          {/* سمت راست: تصویر (اسپلیت) */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="relative"
+            className="bg-primary-pink/5 border border-primary-pink/10 p-8 rounded-[2rem] text-center hover:bg-primary-pink/10 transition-colors"
           >
-            {/* قاب فانتزی پشت عکس */}
-            <div className="absolute inset-0 bg-soft-blue rounded-3xl transform rotate-3 scale-105 -z-10"></div>
-            <div className="relative h-[400px] sm:h-[500px] w-full rounded-3xl overflow-hidden border-4 border-white shadow-xl">
-              <Image 
-  src="/about-magic.webp" /* 👈 فقط همین پسوند رو تغییر دادم */
-  alt="هنر دست و بافتنی‌های فانتزی قلاب جادویی" 
-  fill 
-  className="object-cover hover:scale-110 transition-transform duration-700"
-/>
+            <div className="w-16 h-16 mx-auto bg-primary-pink/20 text-primary-pink rounded-full flex items-center justify-center mb-6">
+              <Heart className="w-8 h-8 fill-primary-pink" />
             </div>
-            
-            {/* یه بج کوچیک شناور روی عکس */}
-            <motion.div 
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute -bottom-6 -left-6 bg-white p-4 rounded-2xl shadow-lg border-2 border-mint-green flex items-center gap-3"
-            >
-              <div className="bg-mint-green p-2 rounded-full">
-                <HeartHandshake className="w-6 h-6 text-text-dark" />
-              </div>
-              <div className="font-sans">
-                <p className="text-sm font-bold text-text-dark">بافته شده با عشق</p>
-                <p className="text-xs text-text-dark/60">۱۰۰٪ هنر دست</p>
-              </div>
-            </motion.div>
+            <h3 className="font-bold text-xl text-text-dark mb-3">بافته شده با عشق</h3>
+            <p className="text-gray-500 font-sans text-sm leading-relaxed">
+              تک‌تک گره‌های محصولات ما توسط دستان هنرمندان تیم، با دقت، ظرافت و عشق فراوان زده می‌شود.
+            </p>
           </motion.div>
 
-          {/* سمت چپ: متن‌های سئو شده و معرفی برند */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="flex flex-col gap-6 text-right"
+            transition={{ delay: 0.1 }}
+            className="bg-soft-blue/10 border border-soft-blue/20 p-8 rounded-[2rem] text-center hover:bg-soft-blue/20 transition-colors"
           >
-            <div className="inline-flex items-center gap-2 text-primary-pink font-bold">
-              <Sparkles className="w-5 h-5" />
-              <span>داستان ما رو بشنوید</span>
+            <div className="w-16 h-16 mx-auto bg-soft-blue text-blue-600 rounded-full flex items-center justify-center mb-6">
+              <Star className="w-8 h-8 fill-blue-600" />
             </div>
-            
-            {/* تگ h2 برای سئو بسیار مهمه */}
-            <h2 className="text-4xl sm:text-5xl font-display text-text-dark leading-snug">
-              اینجا کلاف‌ها به <span className="text-primary-pink">جادو</span> تبدیل می‌شوند!
-            </h2>
-            
-            <p className="text-lg font-sans text-text-dark/80 leading-relaxed text-justify">
-              در فروشگاه <strong className="text-primary-pink">قلاب جادویی</strong>، ما معتقدیم که هر هدیه باید روح و احساس داشته باشه. محصولات ما، از دسته گل‌های کاموایی همیشه بهار گرفته تا عروسک‌های فانتزی، همگی با ظرافت، عشق و ساعت‌ها هنرِ دستِ خلق شده‌اند. 
-              ما اینجا نیستیم که فقط یک محصول بفروشیم؛ ما یک اثر هنری ماندگار برای لحظات خاص شما می‌سازیم.
+            <h3 className="font-bold text-xl text-text-dark mb-3">کیفیت تضمینی</h3>
+            <p className="text-gray-500 font-sans text-sm leading-relaxed">
+              استفاده از بهترین الیاف ضدحساسیت و کامواهای ترک، ماندگاری و لطافت محصولات را تضمین می‌کند.
             </p>
+          </motion.div>
 
-            {/* لیست ویژگی‌ها (بسیار عالی برای خوانایی و سئو) */}
-            <div className="flex flex-col gap-4 mt-4 font-sans text-text-dark/80">
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="w-6 h-6 text-mint-green" />
-                <span className="text-lg">استفاده از بهترین و نرم‌ترین کامواهای بازار</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="w-6 h-6 text-mint-green" />
-                <span className="text-lg">تنوع بی‌نظیر در رنگ‌بندی و طراحی اختصاصی</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <CheckCircle2 className="w-6 h-6 text-mint-green" />
-                <span className="text-lg">هدیه‌ای متفاوت، ماندگار و دوست‌دار محیط زیست</span>
-              </div>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.2 }}
+            className="bg-mint-green/20 border border-mint-green/30 p-8 rounded-[2rem] text-center hover:bg-mint-green/30 transition-colors"
+          >
+            <div className="w-16 h-16 mx-auto bg-mint-green text-green-600 rounded-full flex items-center justify-center mb-6">
+              <ShieldCheck className="w-8 h-8" />
             </div>
+            <h3 className="font-bold text-xl text-text-dark mb-3">خرید امن و سریع</h3>
+            <p className="text-gray-500 font-sans text-sm leading-relaxed">
+              بسته‌بندی ایمن و ارسال سریع به سراسر ایران، تا سفارش شما در بهترین حالت به دستتان برسد.
+            </p>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="bg-soft-yellow/30 border border-soft-yellow/40 p-8 rounded-[2rem] text-center hover:bg-soft-yellow/50 transition-colors"
+          >
+            <div className="w-16 h-16 mx-auto bg-yellow-100 text-yellow-600 rounded-full flex items-center justify-center mb-6">
+              <Smile className="w-8 h-8" />
+            </div>
+            <h3 className="font-bold text-xl text-text-dark mb-3">رضایت مشتریان</h3>
+            <p className="text-gray-500 font-sans text-sm leading-relaxed">
+              بزرگترین افتخار تیم ما، لبخندی است که با دیدن محصولات ما روی لب‌های شما و عزیزانتان می‌نشیند.
+            </p>
           </motion.div>
 
         </div>

@@ -1,12 +1,16 @@
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
-import { ArrowLeft, ShoppingBag, Star, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Star, Image as ImageIcon } from "lucide-react";
+import QuickAddToCartButton from "@/components/QuickAddToCartButton";
 
 // دریافت لحظه‌ای اطلاعات از دیتابیس (سرور ساید - ضد تحریم و فیلتر)
 export const dynamic = 'force-dynamic';
 
-export default async function CategoryPage({ params }: { params: { slug: string } }) {
-  const slug = params.slug;
+export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
+  
+  // رفع مشکل نسخه جدید Next.js
+  const resolvedParams = await params;
+  const slug = resolvedParams.slug;
 
   // ۱. دریافت اطلاعات خود دسته‌بندی از دیتابیس در سمت سرور
   const { data: category } = await supabase
@@ -40,7 +44,6 @@ export default async function CategoryPage({ params }: { params: { slug: string 
       {/* هدر دسته‌بندی با عکس جذاب */}
       <div className="relative bg-white border-b border-gray-100 overflow-hidden">
         <div className="absolute inset-0 z-0 opacity-20">
-            {/* تصویر پس‌زمینه بلور شده برای زیبایی بیشتر */}
             <img src={category.image} alt={category.name} className="w-full h-full object-cover blur-2xl" />
         </div>
         
@@ -94,9 +97,9 @@ export default async function CategoryPage({ params }: { params: { slug: string 
                       <span>{product.price.toLocaleString("fa-IR")}</span>
                       <span className="text-xs text-text-dark/50">تومان</span>
                     </div>
-                    <button className="bg-soft-blue text-text-dark hover:bg-primary-pink hover:text-white p-2.5 rounded-xl transition-all shadow-sm">
-                      <ShoppingBag className="w-5 h-5" />
-                    </button>
+                    
+                    {/* فراخوانی دکمه هوشمند سبد خرید */}
+                    <QuickAddToCartButton product={product} />
                   </div>
                 </div>
               </div>

@@ -2,11 +2,42 @@ import { supabase } from "@/lib/supabase";
 import ProductDetailsClient from "@/components/ProductDetailsClient";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { Metadata } from "next";
 
 export const dynamic = 'force-dynamic';
 
-export default async function ProductDetails({ params }: { params: { id: string } }) {
-  const productId = params.id;
+// 🪄 جادوی سئو: ساخت تایتل و توضیحات متغیر برای هر محصول
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const resolvedParams = await params;
+  
+  const { data: product } = await supabase
+    .from('products')
+    .select('title, description, images')
+    .eq('id', resolvedParams.id)
+    .single();
+
+  if (!product) {
+    return {
+      title: 'محصول پیدا شد | فروشگاه قلاب جادویی',
+    };
+  }
+
+  return {
+    // فرمول طلایی سئو که خواسته بودی
+    title: `خرید آنلاین ${product.title} | قلاب جادویی`,
+    description: product.description ? product.description.substring(0, 150) + '...' : `سفارش آنلاین ${product.title} با تضمین کیفیت توسط تیم حرفه‌ای هنرمندان ما. ارسال به سراسر ایران.`,
+    openGraph: {
+      title: `خرید ${product.title}`,
+      description: product.description || '',
+      images: product.images && product.images.length > 0 ? [product.images[0]] : [],
+    }
+  };
+}
+
+export default async function ProductDetails({ params }: { params: Promise<{ id: string }> }) {
+  // رفع مشکل نسخه جدید Next.js: صبر می‌کنیم تا پارامترها آماده بشن
+  const resolvedParams = await params;
+  const productId = resolvedParams.id;
 
   // دریافت اطلاعات محصول به همراه نام دسته‌بندی از دیتابیس
   const { data: product } = await supabase
