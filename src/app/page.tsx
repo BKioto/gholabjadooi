@@ -58,10 +58,17 @@ export default async function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Hero />
-      <AboutSection />
+      
+      {/* اول دسته‌بندی‌ها برای هدایت سریع مشتری */}
       <Categories categories={categories || []} />
+      
+      {/* دوم پرفروش‌ها برای نمایش سریع محصولات جذاب */}
       <BestSellers products={products || []} />
-      {/* کامپوننت جدید و سئومحور جایگزین شد */}
+      
+      {/* سوم درباره ما برای اعتمادسازیِ هنری بعد از دیدن محصولات */}
+      <AboutSection />
+      
+      {/* متن سئو در پایین‌ترین بخش */}
       <StoreProductsOverview />
     </div>
   );
