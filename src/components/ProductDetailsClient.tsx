@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ShoppingBag, Star, ShieldCheck, Truck, Clock, Minus, Plus, Image as ImageIcon, CheckCircle2, Check, Ruler } from "lucide-react";
 import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
@@ -9,6 +9,9 @@ import { useCartStore } from "@/store/cartStore";
 export default function ProductDetailsClient({ product }: { product: any }) {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
+  
+  // State جدید برای مدیریت عکسی که قراره بزرگ نمایش داده بشه
+  const [mainImage, setMainImage] = useState(product.images && product.images.length > 0 ? product.images[0] : "");
   
   const addToCart = useCartStore((state) => state.addToCart);
 
@@ -20,6 +23,7 @@ export default function ProductDetailsClient({ product }: { product: any }) {
       id: product.id,
       title: product.title,
       price: product.price,
+      // برای سبد خرید همیشه همون عکس اول (ایندکس 0) رو می‌فرستیم
       image: product.images && product.images.length > 0 ? product.images[0] : "",
       quantity: quantity,
     });
@@ -51,23 +55,64 @@ export default function ProductDetailsClient({ product }: { product: any }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
         
-        {/* گالری عکس */}
-        <motion.div 
-          initial={{ opacity: 0, x: 50 }}
-          animate={{ opacity: 1, x: 0 }}
-          className="w-full aspect-square rounded-[3rem] bg-soft-blue/10 flex items-center justify-center relative border-4 border-gray-50 shadow-sm overflow-hidden"
-        >
-          {product.images && product.images.length > 0 ? (
-            <img src={product.images[0]} alt={product.title} className="object-cover w-full h-full" />
-          ) : (
-            <ImageIcon className="w-32 h-32 text-soft-blue opacity-50" />
+        {/* بخش گالری عکس */}
+        <div className="flex flex-col gap-4">
+          
+          {/* باکس عکس اصلی */}
+          <motion.div 
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            className="w-full aspect-square rounded-[3rem] bg-soft-blue/10 flex items-center justify-center relative border-4 border-gray-50 shadow-sm overflow-hidden"
+          >
+            {/* اضافه کردن انیمیشن تعویض عکس برای زیبایی بیشتر */}
+            <AnimatePresence mode="wait">
+              {mainImage ? (
+                <motion.img 
+                  key={mainImage}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  transition={{ duration: 0.3 }}
+                  src={mainImage} 
+                  alt={product.title} 
+                  className="object-cover w-full h-full" 
+                />
+              ) : (
+                <ImageIcon className="w-32 h-32 text-soft-blue opacity-50" />
+              )}
+            </AnimatePresence>
+            
+            <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 shadow-sm border border-gray-100 z-10">
+              <CheckCircle2 className="w-5 h-5 text-mint-green" />
+              <span className="text-sm font-bold text-text-dark font-sans">تضمین کیفیت تیم ما</span>
+            </div>
+          </motion.div>
+
+          {/* ردیف عکس‌های کوچک (Thumbnails) */}
+          {product.images && product.images.length > 1 && (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+              className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide"
+            >
+              {product.images.map((img: string, index: number) => (
+                <button
+                  key={index}
+                  onClick={() => setMainImage(img)}
+                  className={`w-20 h-20 shrink-0 rounded-2xl overflow-hidden border-2 transition-all ${
+                    mainImage === img 
+                      ? "border-primary-pink shadow-md scale-105" 
+                      : "border-gray-100 hover:border-primary-pink/50 opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <img src={img} alt={`${product.title} - تصویر ${index + 1}`} className="w-full h-full object-cover" />
+                </button>
+              ))}
+            </motion.div>
           )}
           
-          <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 shadow-sm border border-gray-100">
-            <CheckCircle2 className="w-5 h-5 text-mint-green" />
-            <span className="text-sm font-bold text-text-dark font-sans">تضمین کیفیت تیم ما</span>
-          </div>
-        </motion.div>
+        </div>
 
         {/* اطلاعات و خرید */}
         <motion.div 
@@ -92,7 +137,7 @@ export default function ProductDetailsClient({ product }: { product: any }) {
             <span className="text-lg text-gray-400 font-normal">تومان</span>
           </div>
 
-          {/* باکس جدید ویژگی‌ها */}
+          {/* باکس ویژگی‌ها */}
           <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex flex-col gap-3 mt-2">
             <div className="flex items-center gap-3">
               <Ruler className="w-5 h-5 text-primary-pink" />
