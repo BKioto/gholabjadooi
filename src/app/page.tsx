@@ -2,6 +2,7 @@ import Hero from "@/components/Hero";
 import AboutSection from "@/components/AboutSection";
 import Categories from "@/components/Categories";
 import BestSellers from "@/components/BestSellers"; 
+import LatestProducts from "@/components/LatestProducts"; // 👈 کامپوننت جدید اضافه‌شد
 import StoreProductsOverview from "@/components/StoreProductsOverview";
 import { supabase } from "@/lib/supabase"; 
 
@@ -44,11 +45,21 @@ export default async function Home() {
     .select('*')
     .order('created_at', { ascending: true });
 
-  // ۲. دریافت اطلاعات ۴ تا از پرفروش‌ترین (یا جدیدترین) محصولات
-  const { data: products } = await supabase
+  // ۲. دریافت اطلاعات ۴ تا از جدیدترین محصولات دیتابیس 👈 کوئری جدید
+  const { data: latestProducts } = await supabase
     .from('products')
     .select('*, categories(name, slug)')
     .eq('is_available', true)
+    .order('created_at', { ascending: false })
+    .limit(4);
+
+  // ۳. دریافت اطلاعات ۴ تا از پرفروش‌ترین محصولات 
+  const { data: bestSellerProducts } = await supabase
+    .from('products')
+    .select('*, categories(name, slug)')
+    .eq('is_available', true)
+    // برای پرفروش‌ها فعلا به صورت صعودی (قدیمی‌ترها) می‌گیریم تا با جدیدترین‌ها فرق کنه
+    .order('created_at', { ascending: true }) 
     .limit(4);
 
   return (
@@ -61,11 +72,14 @@ export default async function Home() {
       
       {/* اول دسته‌بندی‌ها برای هدایت سریع مشتری */}
       <Categories categories={categories || []} />
+
+      {/* دوم جدیدترین محصولات برای القای حس پویایی فروشگاه 👈 بخش جدید */}
+      <LatestProducts products={latestProducts || []} />
       
-      {/* دوم پرفروش‌ها برای نمایش سریع محصولات جذاب */}
-      <BestSellers products={products || []} />
+      {/* سوم پرفروش‌ها برای نمایش سریع محصولات جذاب و پرطرفدار */}
+      <BestSellers products={bestSellerProducts || []} />
       
-      {/* سوم درباره ما برای اعتمادسازیِ هنری بعد از دیدن محصولات */}
+      {/* چهارم درباره ما برای اعتمادسازیِ هنری بعد از دیدن محصولات */}
       <AboutSection />
       
       {/* متن سئو در پایین‌ترین بخش */}
