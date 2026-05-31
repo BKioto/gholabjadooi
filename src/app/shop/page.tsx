@@ -7,12 +7,13 @@ export const dynamic = 'force-dynamic';
 export default async function ShopPage() {
   // ۱. دریافت لیست تمام دسته‌بندی‌ها از دیتابیس
   const { data: categories } = await supabase.from('categories').select('*');
-  
-  // ۲. دریافت لیست تمام محصولات موجود به همراه نام دسته‌بندیشون
+
+  // ۲. دریافت لیست تمام محصولات موجود به همراه نام دسته‌بندیشون (مرتب‌سازی بر اساس جدیدترین‌ها به طور پیش‌فرض)
   const { data: products } = await supabase
     .from('products')
     .select('*, categories(name, slug)')
-    .eq('is_available', true);
+    .eq('is_available', true)
+    .order('created_at', { ascending: false });
 
   return (
     <div className="min-h-screen bg-gray-50/50 pb-20">
@@ -23,6 +24,7 @@ export default async function ShopPage() {
           <h1 className="text-4xl sm:text-5xl font-display text-text-dark mb-4">
             فروشگاه <span className="text-primary-pink">قلاب جادویی</span>
           </h1>
+   
           <p className="text-lg font-sans text-text-dark/70 max-w-2xl mx-auto">
             زیباترین دست‌بافت‌های تیم حرفه‌ای ما رو اینجا کشف کنید. هر محصول داستانی از هنر و عشق است.
           </p>

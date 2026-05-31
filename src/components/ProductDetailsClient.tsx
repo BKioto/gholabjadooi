@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Star, ShieldCheck, Truck, Clock, Minus, Plus, Image as ImageIcon, CheckCircle2, Check, Ruler } from "lucide-react";
+import { ShoppingBag, Star, ShieldCheck, Truck, Clock, Minus, Plus, Image as ImageIcon, CheckCircle2, Check, Ruler, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
 
@@ -10,7 +10,6 @@ export default function ProductDetailsClient({ product }: { product: any }) {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   
-  // State جدید برای مدیریت عکسی که قراره بزرگ نمایش داده بشه
   const [mainImage, setMainImage] = useState(product.images && product.images.length > 0 ? product.images[0] : "");
   
   const addToCart = useCartStore((state) => state.addToCart);
@@ -23,7 +22,6 @@ export default function ProductDetailsClient({ product }: { product: any }) {
       id: product.id,
       title: product.title,
       price: product.price,
-      // برای سبد خرید همیشه همون عکس اول (ایندکس 0) رو می‌فرستیم
       image: product.images && product.images.length > 0 ? product.images[0] : "",
       quantity: quantity,
     });
@@ -32,7 +30,6 @@ export default function ProductDetailsClient({ product }: { product: any }) {
     setTimeout(() => setIsAdded(false), 2000);
   };
 
-  // استخراج ویژگی‌ها از فیلد attributes (JSONB) دیتابیس
   const productSize = product.attributes?.size || "سایز استاندارد";
   const prepTime = product.attributes?.prep_time || "۲ الی ۳ روز کاری";
 
@@ -64,7 +61,6 @@ export default function ProductDetailsClient({ product }: { product: any }) {
             animate={{ opacity: 1, x: 0 }}
             className="w-full aspect-square rounded-[3rem] bg-soft-blue/10 flex items-center justify-center relative border-4 border-gray-50 shadow-sm overflow-hidden"
           >
-            {/* اضافه کردن انیمیشن تعویض عکس برای زیبایی بیشتر */}
             <AnimatePresence mode="wait">
               {mainImage ? (
                 <motion.img 
@@ -88,7 +84,7 @@ export default function ProductDetailsClient({ product }: { product: any }) {
             </div>
           </motion.div>
 
-          {/* ردیف عکس‌های کوچک (Thumbnails) */}
+          {/* ردیف عکس‌های کوچک */}
           {product.images && product.images.length > 1 && (
             <motion.div 
               initial={{ opacity: 0, y: 20 }}
@@ -100,7 +96,7 @@ export default function ProductDetailsClient({ product }: { product: any }) {
                 <button
                   key={index}
                   onClick={() => setMainImage(img)}
-                  className={`w-20 h-20 shrink-0 rounded-2xl overflow-hidden border-2 transition-all ${
+                  className={`w-20 h-20 shrink-0 rounded-2xl overflow-hidden border-2 transition-all cursor-pointer ${
                     mainImage === img 
                       ? "border-primary-pink shadow-md scale-105" 
                       : "border-gray-100 hover:border-primary-pink/50 opacity-70 hover:opacity-100"
@@ -151,6 +147,14 @@ export default function ProductDetailsClient({ product }: { product: any }) {
             </div>
           </div>
 
+          {/* ⚠️ یادداشت قرمز، بولد و جذاب برای ارزش‌گذاری به کارهای دست‌بافت */}
+          <div className="bg-red-50/60 border border-red-100 text-red-500 rounded-2xl p-4 flex items-start gap-3 font-sans text-sm font-bold leading-relaxed shadow-sm">
+            <Sparkles className="w-5 h-5 shrink-0 mt-0.5 text-red-400 animate-pulse" />
+            <p>
+              یادداشت هنری: از آنجا که تمامی آثار این فروشگاه با عشق و کاملاً با دست بافته می‌شوند، وجود تفاوت‌های بسیار جزئی و منحصربه‌فرد در جزئیات نسبت به عکس کاملاً طبیعی است؛ این یعنی اثر ارسالی شما، یک شاهکار یکتاست که فقط برای خود شما خلق شده است! ✨
+            </p>
+          </div>
+
           <p className="text-lg text-text-dark/70 font-sans leading-relaxed text-justify mt-2">
             {product.description || "توضیحاتی برای این محصول ثبت نشده است."}
           </p>
@@ -158,11 +162,11 @@ export default function ProductDetailsClient({ product }: { product: any }) {
           {/* دکمه‌های خرید */}
           <div className="flex flex-col sm:flex-row gap-4 mt-4">
             <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-2xl p-2 w-full sm:w-32">
-              <button onClick={decrease} className="p-2 text-gray-500 hover:text-primary-pink transition-colors">
+              <button onClick={decrease} className="p-2 text-gray-500 hover:text-primary-pink transition-colors cursor-pointer">
                 <Minus className="w-5 h-5" />
               </button>
               <span className="font-bold text-xl font-sans w-8 text-center">{quantity}</span>
-              <button onClick={increase} className="p-2 text-gray-500 hover:text-primary-pink transition-colors">
+              <button onClick={increase} className="p-2 text-gray-500 hover:text-primary-pink transition-colors cursor-pointer">
                 <Plus className="w-5 h-5" />
               </button>
             </div>
@@ -170,7 +174,7 @@ export default function ProductDetailsClient({ product }: { product: any }) {
             <button 
               onClick={handleAddToCart}
               disabled={isAdded}
-              className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-lg transition-all ${
+              className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-lg transition-all cursor-pointer ${
                 isAdded ? "bg-mint-green text-white shadow-md" : "bg-primary-pink text-white hover:shadow-lg"
               }`}
             >
