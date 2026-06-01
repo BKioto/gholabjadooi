@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Search, Star, Image as ImageIcon, SlidersHorizontal } from "lucide-react";
+import { Search, Star, Image as ImageIcon, SlidersHorizontal } from "lucide-react";
 import Link from "next/link";
+import QuickAddToCartButton from "./QuickAddToCartButton";
 
 export default function ShopClient({ initialProducts, initialCategories }: { initialProducts: any[], initialCategories: any[] }) {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortBy, setSortBy] = useState("newest"); // فیلتر مرتب‌سازی جدید
+  const [sortBy, setSortBy] = useState("newest");
 
   // اعمال فیلترها و مرتب‌سازی داینامیک در سمت کلاینت
   const filteredProducts = initialProducts
@@ -20,6 +21,7 @@ export default function ShopClient({ initialProducts, initialCategories }: { ini
     .sort((a, b) => {
       if (sortBy === "price-asc") return a.price - b.price;
       if (sortBy === "price-desc") return b.price - a.price;
+      
       // پیش‌فرض: جدیدترین‌ها (بر اساس تاریخ ساخت نزولی)
       return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
     });
@@ -109,7 +111,7 @@ export default function ShopClient({ initialProducts, initialCategories }: { ini
                     ) : (
                       <ImageIcon className="w-16 h-16 text-soft-blue opacity-50 group-hover:scale-110 transition-transform duration-500" />
                     )}
-                   
+                    
                     <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm">
                       <span className="text-xs font-bold text-text-dark mt-1">۵.۰</span>
                       <Star className="w-3 h-3 text-soft-yellow fill-soft-yellow" />
@@ -133,9 +135,10 @@ export default function ShopClient({ initialProducts, initialCategories }: { ini
                     <span>{product.price.toLocaleString("fa-IR")}</span>
                     <span className="text-xs text-text-dark/50">تومان</span>
                   </div>
-                  <button className="bg-soft-blue text-text-dark hover:bg-primary-pink hover:text-white p-2.5 rounded-xl transition-all shadow-sm cursor-pointer">
-                    <ShoppingBag className="w-5 h-5" />
-                  </button>
+                  
+                  {/* فراخوانی دکمه هوشمند سبد خرید که مشکل رو حل می‌کنه */}
+                  <QuickAddToCartButton product={product} />
+                  
                 </div>
               </motion.div>
             ))}
