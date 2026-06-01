@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // 👈 اضافه شد برای تشخیص صفحه فعلی
+import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
@@ -36,10 +36,10 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           
-          {/* لوگو و نام برند */}
+          {/* لوگو اختصاصی و نام برند */}
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="bg-primary-pink/10 p-2.5 rounded-2xl group-hover:bg-primary-pink/20 transition-colors shadow-inner">
-              <img src="https://api.iconify.design/fluent/magic-wand-24-filled.svg?color=%23FF6B81" alt="قلاب جادویی" className="w-6 h-6 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-300" />
+            <div className="rounded-2xl group-hover:shadow-md transition-all overflow-hidden w-11 h-11 border border-gray-100 shrink-0 bg-white">
+              <img src="/logo.png" alt="لوگوی قلاب جادویی" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
             </div>
             <span className="font-display text-2xl text-primary-pink font-bold tracking-wide">قلاب جادویی</span>
           </Link>

@@ -16,11 +16,11 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           
-          {/* ستون اول: درباره برند و پشتیبانی (سئو شده) */}
+          {/* ستون اول: درباره برند و پشتیبانی با لوگوی جدید */}
           <div className="flex flex-col gap-6 lg:col-span-1">
             <Link href="/" className="flex items-center gap-3 group w-fit">
-              <div className="bg-primary-pink/10 p-2.5 rounded-2xl group-hover:bg-primary-pink/20 transition-colors">
-                <img src="https://api.iconify.design/fluent/magic-wand-24-filled.svg?color=%23FF6B81" alt="قلاب جادویی" className="w-7 h-7" />
+              <div className="rounded-2xl group-hover:shadow-md transition-all overflow-hidden w-12 h-12 border border-gray-100 shrink-0 bg-white">
+                <img src="/logo.png" alt="لوگوی قلاب جادویی" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
               </div>
               <span className="font-display text-3xl text-primary-pink font-bold">قلاب جادویی</span>
             </Link>
