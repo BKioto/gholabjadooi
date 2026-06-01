@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@graphql": [
+  "@graph": [
     {
       "@type": "WebSite",
       "@id": "https://gholabjadooi.ir/#website",
@@ -31,6 +31,20 @@ const jsonLd = {
         "caption": "لوگوی قلاب جادویی"
       },
       "description": "تیم حرفه‌ای از مجرب‌ترین و حرفه‌ای‌ترین هنرمندان بافنده دست‌سازه‌های فانتزی کلاف کاموا",
+      "telephone": "+989924230576",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Ahvaz",
+        "addressRegion": "Khuzestan",
+        "addressCountry": "IR",
+        "streetAddress": "کیان آباد"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+989924230576",
+        "contactType": "customer service",
+        "availableLanguage": "Persian"
+      },
       "sameAs": [
         "https://ble.ir/gholabjadooi"
       ]
