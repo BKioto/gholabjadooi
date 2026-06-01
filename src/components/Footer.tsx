@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Phone, Lock, Code2, ShoppingBag, Info, HelpCircle } from "lucide-react";
+import { Phone, Lock, Code2, ShoppingBag, Info, HelpCircle, Library } from "lucide-react";
 
 export default function Footer() {
   // دریافت سال جاری خورشیدی
@@ -16,14 +16,26 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           
-          {/* ستون اول: درباره برند و پشتیبانی با لوگوی جدید */}
+          {/* ستون اول: درباره برند و پشتیبانی + لینک مخفی و هوشمند پارتنرها */}
           <div className="flex flex-col gap-6 lg:col-span-1">
-            <Link href="/" className="flex items-center gap-3 group w-fit">
-              <div className="rounded-2xl group-hover:shadow-md transition-all overflow-hidden w-12 h-12 border border-gray-100 shrink-0 bg-white">
-                <img src="/logo.png" alt="لوگوی قلاب جادویی" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
-              </div>
-              <span className="font-display text-3xl text-primary-pink font-bold">قلاب جادویی</span>
-            </Link>
+            <div className="flex items-center gap-3">
+              <Link href="/" className="flex items-center gap-3 group w-fit">
+                <div className="rounded-2xl group-hover:shadow-md transition-all overflow-hidden w-12 h-12 border border-gray-100 shrink-0 bg-white">
+                  <img src="/logo.png" alt="لوگوی قلاب جادویی" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300" />
+                </div>
+                <span className="font-display text-3xl text-primary-pink font-bold">قلاب جادویی</span>
+              </Link>
+
+              {/* === هک تمیز و هوشمندانه سئو به سبک کیادو (بدون شلوغ کردن منو) === */}
+              <Link 
+                href="/partners" 
+                title="Partners & Projects"
+                className="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-primary-pink hover:text-white transition-all opacity-60 hover:opacity-100"
+              >
+                <Library className="w-3.5 h-3.5" />
+              </Link>
+              {/* ========================================================== */}
+            </div>
             
             {/* متن سئو شده برای معرفی خدمات قلاب‌بافی */}
             <p className="text-gray-500 font-sans leading-relaxed text-sm text-justify">
@@ -67,7 +79,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* ستون سوم: دسترسی سریع */}
+          {/* ستون سوم: دسترسی سریع (کاملاً تمیز و بدون لینک اضافی) */}
           <div className="flex flex-col gap-6">
             <h3 className="font-bold text-xl text-text-dark relative w-fit">
               دسترسی سریع
