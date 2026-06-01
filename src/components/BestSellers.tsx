@@ -17,7 +17,6 @@ export default function BestSellers({ products }: { products: any[] }) {
         </p>
       </div>
 
-      {/* تغییر به grid-cols-2 برای موبایل */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8">
         {products?.slice(0, 4).map((product, index) => (
           <motion.div
@@ -28,7 +27,8 @@ export default function BestSellers({ products }: { products: any[] }) {
             transition={{ duration: 0.5, delay: index * 0.1 }}
             className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-4 border-2 border-transparent hover:border-primary-pink/20 shadow-sm hover:shadow-xl transition-all group relative flex flex-col"
           >
-            <Link href={`/shop/${product.id}`} className="block relative">
+            {/* 👈 در اینجا id به slug تغییر کرد */}
+            <Link href={`/shop/${product.slug}`} className="block relative">
               <div className="w-full aspect-square rounded-xl sm:rounded-2xl bg-soft-blue/10 flex items-center justify-center mb-3 sm:mb-4 relative overflow-hidden cursor-pointer">
                 {product.images && product.images.length > 0 ? (
                   <img src={product.images[0]} alt={product.title} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" />
@@ -43,7 +43,8 @@ export default function BestSellers({ products }: { products: any[] }) {
             </Link>
 
             <div className="text-right flex flex-col flex-grow">
-              <Link href={`/shop/${product.id}`}>
+              {/* 👈 در اینجا هم id به slug تغییر کرد */}
+              <Link href={`/shop/${product.slug}`}>
                 <h3 className="text-sm sm:text-lg font-bold text-text-dark mb-1 truncate hover:text-primary-pink transition-colors line-clamp-1">
                   {product.title}
                 </h3>

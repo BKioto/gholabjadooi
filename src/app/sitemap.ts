@@ -3,22 +3,21 @@ import { MetadataRoute } from 'next';
 import { supabase } from '@/lib/supabase';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://gholabjadooi.ir';
+  const baseUrl = 'https://www.gholabjadooi.ir';
 
-  // ۱. مسیرهای استاتیک و اصلی سایت
+  // ۱. مسیرهای استاتیک و اصلی سایت با تاریخ ثابت و اولویت‌بندی منطقی سئو
   const staticRoutes: MetadataRoute.Sitemap = [
-    '',
-    '/shop',
-    '/about',
-    '/faq',
-    '/contact',
-    '/terms',
+    { url: '', priority: 1, changeFrequency: 'daily' },
+    { url: '/shop', priority: 0.9, changeFrequency: 'daily' },
+    { url: '/about', priority: 0.7, changeFrequency: 'monthly' },
+    { url: '/faq', priority: 0.7, changeFrequency: 'monthly' },
+    { url: '/contact', priority: 0.7, changeFrequency: 'monthly' },
+    { url: '/terms', priority: 0.4, changeFrequency: 'yearly' },
   ].map((route) => ({
-    url: `${baseUrl}${route}`,
-    lastModified: new Date(),
-    changeFrequency: 'daily',
-    // اولویت صفحه اصلی ۱ و بقیه صفحات ۰.۸
-    priority: route === '' ? 1 : 0.8,
+    url: `${baseUrl}${route.url}`,
+    lastModified: new Date('2026-06-01'), // 👈 استفاده از تاریخ ثابت به جای زمان حال تا ربات‌ها سایت رو جریمه نکنن
+    changeFrequency: route.changeFrequency as any,
+    priority: route.priority,
   }));
 
   // ۲. دریافت دسته‌بندی‌های واقعی از دیتابیس
@@ -28,25 +27,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const categoryRoutes: MetadataRoute.Sitemap = (categories || []).map((category) => ({
     url: `${baseUrl}/category/${category.slug}`,
-    // اگر تاریخ آپدیت داشتیم اون رو میذاریم، وگرنه تاریخ ساخت یا زمان حال
-    lastModified: category.created_at ? new Date(category.created_at) : new Date(),
+    lastModified: category.created_at ? new Date(category.created_at) : new Date('2026-06-01'),
     changeFrequency: 'weekly',
-    priority: 0.7, // اولویت دسته‌بندی‌ها از محصولات بالاتر و از صفحات اصلی کمتر است
+    priority: 0.8, // 👈 اولویت دسته‌بندی‌ها رو بالاتر از قبل بردیم
   }));
 
-  // ۳. دریافت محصولات واقعی از دیتابیس (فقط اونایی که موجود هستن)
+  // ۳. دریافت محصولات واقعی از دیتابیس
   const { data: products } = await supabase
     .from('products')
-    .select('id, created_at')
+    .select('slug, created_at')
     .eq('is_available', true);
 
   const productRoutes: MetadataRoute.Sitemap = (products || []).map((product) => ({
-    url: `${baseUrl}/shop/${product.id}`,
-    lastModified: product.created_at ? new Date(product.created_at) : new Date(),
+    url: `${baseUrl}/shop/${product.slug}`, 
+    lastModified: product.created_at ? new Date(product.created_at) : new Date('2026-06-01'),
     changeFrequency: 'weekly',
-    priority: 0.6,
+    priority: 0.7, // 👈 اولویت محصولات رو هم بالاتر بردیم
   }));
 
-  // ترکیب تمام مسیرها (استاتیک + دسته‌بندی‌ها + محصولات) و تولید خروجی برای گوگل
+  // ترکیب تمام مسیرها و تولید خروجی برای گوگل
   return [...staticRoutes, ...categoryRoutes, ...productRoutes];
 }

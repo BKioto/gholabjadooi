@@ -104,7 +104,8 @@ export default function ShopClient({ initialProducts, initialCategories }: { ini
                 transition={{ duration: 0.3 }}
                 className="bg-white rounded-3xl p-4 border-2 border-transparent hover:border-primary-pink/20 shadow-sm hover:shadow-xl transition-all group relative flex flex-col justify-between"
               >
-                <Link href={`/shop/${product.id}`}>
+                {/* 👈 در اینجا id به slug تغییر کرد */}
+                <Link href={`/shop/${product.slug}`}>
                   <div className="w-full aspect-square rounded-2xl bg-soft-blue/10 flex items-center justify-center mb-4 relative overflow-hidden cursor-pointer">
                     {product.images && product.images.length > 0 ? (
                       <img src={product.images[0]} alt={product.title} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" />
@@ -120,7 +121,8 @@ export default function ShopClient({ initialProducts, initialCategories }: { ini
                 </Link>
 
                 <div className="text-right flex-grow">
-                  <Link href={`/shop/${product.id}`}>
+                  {/* 👈 در اینجا هم id به slug تغییر کرد */}
+                  <Link href={`/shop/${product.slug}`}>
                     <h3 className="text-lg font-bold text-text-dark mb-1 truncate hover:text-primary-pink transition-colors">
                       {product.title}
                     </h3>
@@ -136,7 +138,6 @@ export default function ShopClient({ initialProducts, initialCategories }: { ini
                     <span className="text-xs text-text-dark/50">تومان</span>
                   </div>
                   
-                  {/* فراخوانی دکمه هوشمند سبد خرید که مشکل رو حل می‌کنه */}
                   <QuickAddToCartButton product={product} />
                   
                 </div>

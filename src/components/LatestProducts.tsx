@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Star, Image as ImageIcon } from "lucide-react";
+import { Star, Image as ImageIcon, Sparkles } from "lucide-react";
 import Link from "next/link";
 import QuickAddToCartButton from "./QuickAddToCartButton";
 
@@ -9,6 +9,10 @@ export default function LatestProducts({ products }: { products: any[] }) {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 bg-soft-blue/10 rounded-[3rem] my-8 border border-soft-blue/30 shadow-sm">
       <div className="text-center mb-12">
+        <div className="inline-flex items-center gap-2 bg-primary-pink/10 text-primary-pink px-4 py-2 rounded-full mb-4 shadow-sm">
+          <Sparkles className="w-5 h-5" />
+          <span className="font-bold text-sm">تازه‌های تنور قلاب جادویی</span>
+        </div>
         <h2 className="text-3xl sm:text-4xl font-display text-text-dark mb-4">
           جدیدترین دست‌بافت‌ها
         </h2>
@@ -27,12 +31,12 @@ export default function LatestProducts({ products }: { products: any[] }) {
             transition={{ duration: 0.5, delay: index * 0.1 }}
             className="bg-white rounded-2xl sm:rounded-3xl p-3 sm:p-4 border-2 border-transparent hover:border-primary-pink/20 shadow-sm hover:shadow-xl transition-all group relative flex flex-col"
           >
-            {/* بج جدید بودن محصول */}
             <div className="absolute top-0 right-0 -mt-2 -mr-2 bg-red-500 text-white text-[10px] sm:text-xs font-bold px-3 py-1 rounded-bl-xl rounded-tr-xl rounded-tl-sm rounded-br-sm shadow-lg z-20 animate-pulse">
-              جدید
+              جدید ✨
             </div>
 
-            <Link href={`/shop/${product.id}`} className="block relative">
+            {/* 👈 در اینجا id به slug تغییر کرد */}
+            <Link href={`/shop/${product.slug}`} className="block relative">
               <div className="w-full aspect-square rounded-xl sm:rounded-2xl bg-soft-blue/10 flex items-center justify-center mb-3 sm:mb-4 relative overflow-hidden cursor-pointer">
                 {product.images && product.images.length > 0 ? (
                   <img src={product.images[0]} alt={product.title} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-500" />
@@ -47,7 +51,8 @@ export default function LatestProducts({ products }: { products: any[] }) {
             </Link>
 
             <div className="text-right flex flex-col flex-grow">
-              <Link href={`/shop/${product.id}`}>
+              {/* 👈 در اینجا هم id به slug تغییر کرد */}
+              <Link href={`/shop/${product.slug}`}>
                 <h3 className="text-sm sm:text-lg font-bold text-text-dark mb-1 truncate hover:text-primary-pink transition-colors line-clamp-1">
                   {product.title}
                 </h3>

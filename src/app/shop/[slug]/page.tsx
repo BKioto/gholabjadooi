@@ -7,13 +7,13 @@ import { Metadata } from "next";
 export const dynamic = 'force-dynamic';
 
 // 🪄 جادوی سئو: ساخت تایتل و توضیحات متغیر برای هر محصول
-export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const resolvedParams = await params;
   
   const { data: product } = await supabase
     .from('products')
     .select('title, description, images')
-    .eq('id', resolvedParams.id)
+    .eq('slug', resolvedParams.slug) // 👈 اینجا به جای آیدی، با اسلاگ جستجو می‌کنه
     .single();
 
   if (!product) {
@@ -23,7 +23,6 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   }
 
   return {
-    // فرمول طلایی سئو که خواسته بودی
     title: `خرید آنلاین ${product.title} | قلاب جادویی`,
     description: product.description ? product.description.substring(0, 150) + '...' : `سفارش آنلاین ${product.title} با تضمین کیفیت توسط تیم حرفه‌ای هنرمندان ما. ارسال به سراسر ایران.`,
     openGraph: {
@@ -34,19 +33,19 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   };
 }
 
-export default async function ProductDetails({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProductDetails({ params }: { params: Promise<{ slug: string }> }) {
   // رفع مشکل نسخه جدید Next.js: صبر می‌کنیم تا پارامترها آماده بشن
   const resolvedParams = await params;
-  const productId = resolvedParams.id;
+  const productSlug = resolvedParams.slug; // 👈 اینجا اسلاگ رو از آدرس می‌خونه
 
-  // دریافت اطلاعات محصول به همراه نام دسته‌بندی از دیتابیس
+  // دریافت اطلاعات محصول به همراه نام دسته‌بندی از دیتابیس بر اساس اسلاگ
   const { data: product } = await supabase
     .from('products')
     .select('*, categories(name, slug)')
-    .eq('id', productId)
+    .eq('slug', productSlug) // 👈 جستجو در دیتابیس با اسلاگ
     .single();
 
-  // اگر کاربری آیدی اشتباه زد یا محصول پاک شده بود
+  // اگر کاربری آدرس اشتباه زد یا محصول پاک شده بود
   if (!product) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50/50 px-4 text-center">

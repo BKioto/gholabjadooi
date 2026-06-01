@@ -9,7 +9,7 @@ export default function robots(): MetadataRoute.Robots {
       // جلوگیری از خزش ربات‌ها در صفحات خصوصی و سبد خرید
       disallow: ['/cart', '/checkout', '/track-order'], 
     },
-    // معرفی آدرس دقیق نقشه سایت به موتورهای جستجو
-    sitemap: 'https://gholabjadooi.ir/sitemap.xml',
+    // 👈 مشکل اول در این خط برطرف شد (www اضافه شد)
+    sitemap: 'https://www.gholabjadooi.ir/sitemap.xml',
   };
 }
