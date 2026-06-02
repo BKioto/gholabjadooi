@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { User, MapPin, Phone, CreditCard, ShieldCheck, Truck, Loader2, CheckCircle2 } from "lucide-react";
+import { User, MapPin, Phone, CreditCard, ShieldCheck, Truck, Loader2, CheckCircle2, Copy } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { supabase } from "@/lib/supabase";
 
@@ -13,6 +13,9 @@ export default function CheckoutPage() {
   const [mounted, setMounted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  
+  // 👈 استیت برای ذخیره اطلاعات کارت بانکی
+  const [bankInfo, setBankInfo] = useState({ cardNumber: '', cardOwnerName: '' });
 
   // استیت‌های فرم
   const [formData, setFormData] = useState({
@@ -22,15 +25,23 @@ export default function CheckoutPage() {
     postalCode: ""
   });
 
-  // دریافت اطلاعات از حافظه سبد خرید
   const { items, getTotalPrice, clearCart } = useCartStore();
 
   useEffect(() => {
     setMounted(true);
-    // اگر کاربر با سبد خالی اومد اینجا، برش گردون به فروشگاه
     if (items.length === 0 && !isSuccess) {
       router.push('/shop');
     }
+    
+    // 👈 دریافت اطلاعات کارت از دیتابیس
+    const fetchBankInfo = async () => {
+      const { data } = await supabase.from('store_settings').select('card_number, card_owner_name').eq('id', 1).single();
+      if (data) {
+        setBankInfo({ cardNumber: data.card_number || '', cardOwnerName: data.card_owner_name || '' });
+      }
+    };
+    fetchBankInfo();
+
   }, [items, router, isSuccess]);
 
   if (!mounted) return null;
@@ -44,11 +55,17 @@ export default function CheckoutPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // تابع ارسال سفارش به دیتابیس (کاملاً منطبق بر ساختار استاندارد دیتابیس)
+  // تابع کپی کردن شماره کارت
+  const copyToClipboard = () => {
+    if (bankInfo.cardNumber) {
+      navigator.clipboard.writeText(bankInfo.cardNumber);
+      alert('شماره کارت کپی شد.');
+    }
+  };
+
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // اعتبارسنجی ساده
     if (!formData.name || !formData.phone || !formData.address) {
       alert("لطفاً فیلدهای ضروری (نام، موبایل و آدرس) را پر کنید.");
       return;
@@ -57,46 +74,39 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
-      // ۱. ثبت سفارش اصلی در جدول orders و دریافت آیدی سفارش ساخته شده
       const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert([
           {
             customer_name: formData.name,
             customer_phone: formData.phone,
-            customer_address: formData.address, // 👈 اصلاح نام ستون به نام دقیق دیتابیس
+            customer_address: formData.address,
             postal_code: formData.postalCode,
             total_amount: total,
-            status: 'pending' // وضعیت اولیه سفارش
+            status: 'pending'
           }
         ])
         .select('id')
-        .single(); // دریافت آیدی سفارشی که الان ثبت شد
+        .single();
 
       if (orderError) throw orderError;
 
       const orderId = orderData.id;
 
-      // ۲. آماده‌سازی لیست محصولات برای جدول order_items
       const orderItemsToInsert = items.map(item => ({
         order_id: orderId,
         product_id: item.id,
         quantity: item.quantity,
-        price_at_time: item.price // ثبت قیمت در لحظه خرید (برای حسابداری آینده)
+        price_at_time: item.price
       }));
 
-      // ۳. ثبت محصولات در جدول order_items
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItemsToInsert);
+      const { error: itemsError } = await supabase.from('order_items').insert(orderItemsToInsert);
 
       if (itemsError) throw itemsError;
 
-      // موفقیت‌آمیز بود!
       setIsSuccess(true);
-      clearCart(); // خالی کردن سبد خرید
+      clearCart();
       
-      // بعد از ۴ ثانیه انتقال به صفحه اصلی
       setTimeout(() => {
         router.push('/');
       }, 4000);
@@ -109,7 +119,6 @@ export default function CheckoutPage() {
     }
   };
 
-  // نمایش صفحه موفقیت بعد از ثبت سفارش
   if (isSuccess) {
     return (
       <div className="min-h-screen bg-gray-50/50 flex flex-col items-center justify-center py-12 px-4">
@@ -144,7 +153,6 @@ export default function CheckoutPage() {
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           
-          {/* سمت راست: فرم اطلاعات مشتری */}
           <motion.div 
             initial={{ opacity: 0, x: 50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -218,7 +226,6 @@ export default function CheckoutPage() {
             </form>
           </motion.div>
 
-          {/* سمت چپ: فاکتور نهایی و پرداخت */}
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -226,23 +233,42 @@ export default function CheckoutPage() {
           >
             <h3 className="text-xl font-bold text-text-dark mb-6 border-b border-gray-50 pb-4 flex items-center gap-2">
               <CreditCard className="w-6 h-6 text-soft-blue" />
-              پرداخت و ثبت نهایی
+              فاکتور و واریز وجه
             </h3>
             
-            <div className="flex flex-col gap-4 font-sans text-text-dark/80 mb-6">
+            <div className="flex flex-col gap-4 font-sans text-text-dark/80 mb-6 border-b border-gray-100 pb-6">
               <div className="flex justify-between items-center">
-                <span>مبلغ کل محصولات:</span>
+                <span>مبلغ محصولات:</span>
                 <span className="font-bold text-text-dark">{subtotal.toLocaleString("fa-IR")} تومان</span>
               </div>
               <div className="flex justify-between items-center">
                 <span>هزینه بسته‌بندی و ارسال:</span>
                 <span className="font-bold text-text-dark">{shippingCost.toLocaleString("fa-IR")} تومان</span>
               </div>
+              <div className="flex justify-between items-center mt-2 pt-4 border-t border-gray-100">
+                <span className="text-lg font-bold text-text-dark">مبلغ قابل پرداخت:</span>
+                <span className="text-xl font-bold text-primary-pink">{total.toLocaleString("fa-IR")} تومان</span>
+              </div>
             </div>
 
-            <div className="border-t border-gray-100 pt-6 mb-8 flex justify-between items-center">
-              <span className="text-lg font-bold text-text-dark">مبلغ قابل پرداخت:</span>
-              <span className="text-2xl font-bold text-primary-pink">{total.toLocaleString("fa-IR")} تومان</span>
+            {/* 👈 باکس نمایش اطلاعات کارت بانکی */}
+            <div className="bg-soft-blue/10 border border-soft-blue/30 rounded-2xl p-4 mb-6">
+              <p className="text-sm text-text-dark font-bold mb-3 text-center">
+                لطفاً مبلغ فاکتور را به کارت زیر واریز کنید:
+              </p>
+              
+              <div className="bg-white p-3 rounded-xl border border-gray-100 mb-2 flex items-center justify-between">
+                <button type="button" onClick={copyToClipboard} className="text-gray-400 hover:text-primary-pink transition-colors">
+                  <Copy className="w-5 h-5" />
+                </button>
+                <span className="font-bold text-lg tracking-widest text-text-dark" dir="ltr">
+                  {bankInfo.cardNumber || 'در حال بارگذاری...'}
+                </span>
+              </div>
+              
+              <div className="text-center font-sans text-sm text-gray-500">
+                به نام: <span className="font-bold text-text-dark">{bankInfo.cardOwnerName || 'در حال بارگذاری...'}</span>
+              </div>
             </div>
 
             <button 
@@ -254,12 +280,12 @@ export default function CheckoutPage() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="w-6 h-6 animate-spin" />
-                  در حال ثبت سفارش...
+                  در حال بررسی...
                 </>
               ) : (
                 <>
                   <ShieldCheck className="w-6 h-6" />
-                  تایید نهایی و ثبت سفارش
+                  وجه را واریز کردم (ثبت نهایی)
                 </>
               )}
             </button>
