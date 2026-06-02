@@ -1,3 +1,5 @@
+// مسیر فایل: src/app/shop/[slug]/page.tsx
+
 import { supabase } from "@/lib/supabase";
 import ProductDetailsClient from "@/components/ProductDetailsClient";
 import Link from "next/link";
@@ -13,7 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { data: product } = await supabase
     .from('products')
     .select('title, description, images')
-    .eq('slug', resolvedParams.slug) // 👈 اینجا به جای آیدی، با اسلاگ جستجو می‌کنه
+    .eq('slug', resolvedParams.slug) // 👈 جستجو با اسلاگ
     .single();
 
   if (!product) {
@@ -34,18 +36,27 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 }
 
 export default async function ProductDetails({ params }: { params: Promise<{ slug: string }> }) {
-  // رفع مشکل نسخه جدید Next.js: صبر می‌کنیم تا پارامترها آماده بشن
+  // رفع مشکل نسخه جدید Next.js
   const resolvedParams = await params;
-  const productSlug = resolvedParams.slug; // 👈 اینجا اسلاگ رو از آدرس می‌خونه
+  const productSlug = resolvedParams.slug;
 
-  // دریافت اطلاعات محصول به همراه نام دسته‌بندی از دیتابیس بر اساس اسلاگ
+  // 👈 دریافت وضعیت فروشگاه از دیتابیس سوپابیس
+  const { data: settings } = await supabase
+    .from('store_settings')
+    .select('is_open')
+    .eq('id', 1)
+    .single();
+    
+  // اگر به هر دلیلی دیتابیس جواب نداد، پیش‌فرض فروشگاه باز باشه
+  const isStoreOpen = settings?.is_open ?? true;
+
+  // دریافت اطلاعات محصول
   const { data: product } = await supabase
     .from('products')
     .select('*, categories(name, slug)')
-    .eq('slug', productSlug) // 👈 جستجو در دیتابیس با اسلاگ
+    .eq('slug', productSlug)
     .single();
 
-  // اگر کاربری آدرس اشتباه زد یا محصول پاک شده بود
   if (!product) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50/50 px-4 text-center">
@@ -60,7 +71,8 @@ export default async function ProductDetails({ params }: { params: Promise<{ slu
 
   return (
     <div className="min-h-screen bg-white py-12">
-      <ProductDetailsClient product={product} />
+      {/* 👈 پاس دادن وضعیت فروشگاه به کامپوننت دکمه‌ها */}
+      <ProductDetailsClient product={product} isStoreOpen={isStoreOpen} />
     </div>
   );
 }

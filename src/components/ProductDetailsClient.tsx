@@ -1,25 +1,36 @@
+// مسیر فایل: src/components/ProductDetailsClient.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Star, ShieldCheck, Truck, Clock, Minus, Plus, Image as ImageIcon, CheckCircle2, Check, Ruler, Sparkles, ZoomIn, X } from "lucide-react";
+import { ShoppingBag, Star, ShieldCheck, Truck, Clock, Minus, Plus, Image as ImageIcon, CheckCircle2, Check, Ruler, Sparkles, ZoomIn, X, Lock } from "lucide-react";
 import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
 
-export default function ProductDetailsClient({ product }: { product: any }) {
+// 👈 اضافه شدن isStoreOpen به پراپ‌های کامپوننت
+export default function ProductDetailsClient({ product, isStoreOpen = true }: { product: any, isStoreOpen?: boolean }) {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [mainImage, setMainImage] = useState(product.images && product.images.length > 0 ? product.images[0] : "");
   
-  // State جدید برای باز و بسته شدن گالری تمام‌صفحه
+  // State برای باز و بسته شدن گالری تمام‌صفحه
   const [isFullscreen, setIsFullscreen] = useState(false);
   
   const addToCart = useCartStore((state) => state.addToCart);
 
-  const increase = () => setQuantity(prev => prev + 1);
-  const decrease = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+  const increase = () => {
+    if (!isStoreOpen) return; // اگر بسته بود، دکمه کار نکنه
+    setQuantity(prev => prev + 1);
+  };
+  
+  const decrease = () => {
+    if (!isStoreOpen) return; // اگر بسته بود، دکمه کار نکنه
+    setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+  };
 
   const handleAddToCart = () => {
+    if (!isStoreOpen) return; // جلوگیری از اضافه شدن به سبد در صورت بسته بودن فروشگاه
+
     addToCart({
       id: product.id,
       title: product.title,
@@ -68,7 +79,7 @@ export default function ProductDetailsClient({ product }: { product: any }) {
           {/* بخش گالری عکس */}
           <div className="flex flex-col gap-4">
             
-            {/* باکس عکس اصلی (قابل کلیک برای بزرگنمایی) */}
+            {/* باکس عکس اصلی */}
             <motion.div 
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -92,7 +103,7 @@ export default function ProductDetailsClient({ product }: { product: any }) {
                 )}
               </AnimatePresence>
 
-              {/* آیکون ذره‌بین که با رفتن موس روی عکس ظاهر می‌شود */}
+              {/* آیکون ذره‌بین */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center z-20">
                 <div className="bg-white/90 backdrop-blur-md p-4 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 shadow-lg flex items-center gap-2">
                   <ZoomIn className="w-6 h-6 text-text-dark" />
@@ -107,7 +118,7 @@ export default function ProductDetailsClient({ product }: { product: any }) {
               </div>
             </motion.div>
 
-            {/* ردیف عکس‌های کوچک در صفحه اصلی */}
+            {/* ردیف عکس‌های کوچک */}
             {product.images && product.images.length > 1 && (
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
@@ -170,7 +181,7 @@ export default function ProductDetailsClient({ product }: { product: any }) {
               </div>
             </div>
 
-            {/* یادداشت بولد برای ارزش‌گذاری به کارهای دست‌بافت */}
+            {/* یادداشت بولد */}
             <div className="bg-red-50/60 border border-red-100 text-red-500 rounded-2xl p-4 flex items-start gap-3 font-sans text-sm font-bold leading-relaxed shadow-sm">
               <Sparkles className="w-5 h-5 shrink-0 mt-0.5 text-red-400 animate-pulse" />
               <p>
@@ -184,24 +195,43 @@ export default function ProductDetailsClient({ product }: { product: any }) {
 
             {/* دکمه‌های خرید */}
             <div className="flex flex-col sm:flex-row gap-4 mt-4">
-              <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-2xl p-2 w-full sm:w-32">
-                <button onClick={decrease} className="p-2 text-gray-500 hover:text-primary-pink transition-colors cursor-pointer">
+              <div className={`flex items-center justify-between border rounded-2xl p-2 w-full sm:w-32 transition-colors ${
+                isStoreOpen ? 'bg-gray-50 border-gray-200' : 'bg-gray-100 border-gray-300 opacity-60'
+              }`}>
+                <button 
+                  onClick={decrease} 
+                  disabled={!isStoreOpen}
+                  className={`p-2 transition-colors ${isStoreOpen ? 'text-gray-500 hover:text-primary-pink cursor-pointer' : 'text-gray-400 cursor-not-allowed'}`}
+                >
                   <Minus className="w-5 h-5" />
                 </button>
-                <span className="font-bold text-xl font-sans w-8 text-center">{quantity}</span>
-                <button onClick={increase} className="p-2 text-gray-500 hover:text-primary-pink transition-colors cursor-pointer">
+                <span className={`font-bold text-xl font-sans w-8 text-center ${!isStoreOpen ? 'text-gray-400' : ''}`}>
+                  {quantity}
+                </span>
+                <button 
+                  onClick={increase} 
+                  disabled={!isStoreOpen}
+                  className={`p-2 transition-colors ${isStoreOpen ? 'text-gray-500 hover:text-primary-pink cursor-pointer' : 'text-gray-400 cursor-not-allowed'}`}
+                >
                   <Plus className="w-5 h-5" />
                 </button>
               </div>
 
+              {/* 👈 دکمه هوشمند خرید (بسته به وضعیت فروشگاه تغییر رنگ و متن می‌دهد) */}
               <button 
                 onClick={handleAddToCart}
-                disabled={isAdded}
-                className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-lg transition-all cursor-pointer ${
-                  isAdded ? "bg-mint-green text-white shadow-md" : "bg-primary-pink text-white hover:shadow-lg"
+                disabled={isAdded || !isStoreOpen}
+                className={`flex-1 flex items-center justify-center gap-2 py-4 rounded-2xl font-bold text-lg transition-all ${
+                  !isStoreOpen 
+                    ? "bg-gray-300 text-gray-500 cursor-not-allowed border border-gray-400 border-dashed" 
+                    : isAdded 
+                      ? "bg-mint-green text-white shadow-md cursor-default" 
+                      : "bg-primary-pink text-white hover:shadow-lg cursor-pointer"
                 }`}
               >
-                {isAdded ? (
+                {!isStoreOpen ? (
+                  <><Lock className="w-6 h-6" /> فروشگاه موقتاً بسته است</>
+                ) : isAdded ? (
                   <><Check className="w-6 h-6" /> به سبد خرید اضافه شد</>
                 ) : (
                   <><ShoppingBag className="w-6 h-6" /> افزودن به سبد خرید</>
@@ -212,7 +242,7 @@ export default function ProductDetailsClient({ product }: { product: any }) {
         </div>
       </div>
 
-      {/* مودال گالری تمام‌صفحه (Lightbox) */}
+      {/* مودال گالری تمام‌صفحه */}
       <AnimatePresence>
         {isFullscreen && (
           <motion.div
@@ -220,9 +250,8 @@ export default function ProductDetailsClient({ product }: { product: any }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-xl flex flex-col items-center justify-center p-4 sm:p-8"
-            onClick={() => setIsFullscreen(false)} // بستن با کلیک روی پس‌زمینه
+            onClick={() => setIsFullscreen(false)}
           >
-            {/* دکمه بستن خفن */}
             <button
               onClick={() => setIsFullscreen(false)}
               className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-red-500/80 rounded-full text-white transition-all z-50 shadow-lg backdrop-blur-md"
@@ -230,18 +259,16 @@ export default function ProductDetailsClient({ product }: { product: any }) {
               <X className="w-8 h-8" />
             </button>
 
-            {/* عکس بزرگنمایی شده */}
             <motion.div
               initial={{ scale: 0.9, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.9, y: 20 }}
-              onClick={(e) => e.stopPropagation()} // جلوگیری از بسته شدن با کلیک روی خود عکس
+              onClick={(e) => e.stopPropagation()}
               className="relative w-full max-w-5xl h-[70vh] sm:h-[80vh] flex items-center justify-center"
             >
                <img src={mainImage} alt={product.title} className="max-w-full max-h-full object-contain drop-shadow-2xl rounded-2xl" />
             </motion.div>
 
-            {/* گالری تصاویر کوچک داخل مودال برای دسترسی سریع کاربر */}
             {product.images && product.images.length > 1 && (
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}

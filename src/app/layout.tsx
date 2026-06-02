@@ -1,11 +1,13 @@
+// مسیر فایل: src/app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import StoreStatusBanner from "@/components/StoreStatusBanner";
+import { supabase } from "@/lib/supabase";
 
-// 🪄 تنظیمات پرفکت و جامع سئو برای کل فروشگاه
 export const metadata: Metadata = {
-  metadataBase: new URL('https://www.gholabjadooi.ir'), // 👈 اضافه شدن آدرس پایه برای جلوگیری از ارورهای گوگل
+  metadataBase: new URL('https://www.gholabjadooi.ir'),
   title: {
     template: "%s | قلاب جادویی", 
     default: "فروشگاه قلاب جادویی | خرید آنلاین دست‌بافت‌های فانتزی و عروسک کاموایی", 
@@ -50,14 +52,28 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  
+  // 👈 خواندن وضعیت باز/بسته بودن فروشگاه از دیتابیس (بدون کش)
+  const { data: settings } = await supabase
+    .from('store_settings')
+    .select('is_open')
+    .eq('id', 1)
+    .single();
+
+  const isStoreOpen = settings?.is_open ?? true; // اگر خطایی بود، پیش‌فرض باز باشه
+
   return (
     <html lang="fa" dir="rtl">
       <body className="font-sans antialiased bg-soft-blue text-text-dark">
+        
+        {/* بنر هوشمند وضعیت فروشگاه (فقط وقتی بسته است نمایش داده میشه) */}
+        <StoreStatusBanner isOpen={isStoreOpen} />
+
         {/* نوبار هوشمندی که ساختیم */}
         <Navbar />
         
