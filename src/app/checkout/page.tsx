@@ -1,3 +1,4 @@
+// مسیر فایل: src/app/checkout/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
@@ -43,7 +44,7 @@ export default function CheckoutPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // تابع ارسال سفارش به دیتابیس
+  // تابع ارسال سفارش به دیتابیس (کاملاً منطبق بر ساختار استاندارد دیتابیس)
   const handleSubmitOrder = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -56,22 +57,40 @@ export default function CheckoutPage() {
     setIsSubmitting(true);
 
     try {
-      // ثبت سفارش در جدول orders در سوپابیس
-      const { error } = await supabase
+      // ۱. ثبت سفارش اصلی در جدول orders و دریافت آیدی سفارش ساخته شده
+      const { data: orderData, error: orderError } = await supabase
         .from('orders')
         .insert([
           {
             customer_name: formData.name,
             customer_phone: formData.phone,
-            shipping_address: formData.address,
+            customer_address: formData.address, // 👈 اصلاح نام ستون به نام دقیق دیتابیس
             postal_code: formData.postalCode,
             total_amount: total,
-            items: items, // ذخیره لیست محصولات به صورت JSON
             status: 'pending' // وضعیت اولیه سفارش
           }
-        ]);
+        ])
+        .select('id')
+        .single(); // دریافت آیدی سفارشی که الان ثبت شد
 
-      if (error) throw error;
+      if (orderError) throw orderError;
+
+      const orderId = orderData.id;
+
+      // ۲. آماده‌سازی لیست محصولات برای جدول order_items
+      const orderItemsToInsert = items.map(item => ({
+        order_id: orderId,
+        product_id: item.id,
+        quantity: item.quantity,
+        price_at_time: item.price // ثبت قیمت در لحظه خرید (برای حسابداری آینده)
+      }));
+
+      // ۳. ثبت محصولات در جدول order_items
+      const { error: itemsError } = await supabase
+        .from('order_items')
+        .insert(orderItemsToInsert);
+
+      if (itemsError) throw itemsError;
 
       // موفقیت‌آمیز بود!
       setIsSuccess(true);
