@@ -1,7 +1,12 @@
+// مسیر فایل: src/app/category/[slug]/page.tsx
+
 import { supabase } from "@/lib/supabase";
 import Link from "next/link";
 import { ArrowLeft, Star, Image as ImageIcon } from "lucide-react";
 import QuickAddToCartButton from "@/components/QuickAddToCartButton";
+
+// 👈 ایمپورت کامپوننت جادویی سئو که ساختیم
+import CategorySeoBox from "@/components/CategorySeoBox"; 
 
 // دریافت لحظه‌ای اطلاعات از دیتابیس (سرور ساید - ضد تحریم و فیلتر)
 export const dynamic = 'force-dynamic';
@@ -72,7 +77,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 key={product.id}
                 className="bg-white rounded-3xl p-4 border-2 border-transparent hover:border-primary-pink/20 shadow-sm hover:shadow-xl transition-all group relative"
               >
-                {/* 👈 تغییر از id به slug در لینک عکس محصول */}
                 <Link href={`/shop/${product.slug}`}>
                   <div className="w-full aspect-square rounded-2xl bg-soft-blue/10 flex items-center justify-center mb-4 relative overflow-hidden cursor-pointer">
                     {product.images && product.images.length > 0 ? (
@@ -88,7 +92,6 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
                 </Link>
 
                 <div className="text-right">
-                  {/* 👈 تغییر از id به slug در لینک نام محصول */}
                   <Link href={`/shop/${product.slug}`}>
                     <h3 className="text-lg font-bold text-text-dark mb-1 truncate hover:text-primary-pink transition-colors">
                       {product.title}
@@ -114,6 +117,10 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </div>
         )}
       </div>
+
+      {/* 👈 اینم از ضربه نهایی: نمایش باکس سئو در پایین صفحه */}
+      <CategorySeoBox slug={slug} />
+
     </div>
   );
 }
