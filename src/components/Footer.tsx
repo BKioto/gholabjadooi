@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Phone, Lock, Code2, ShoppingBag, Info, HelpCircle, Library } from "lucide-react";
+import { Phone, Code2, ShoppingBag, Info, HelpCircle, Library } from "lucide-react";
 
 export default function Footer() {
   // دریافت سال جاری خورشیدی
@@ -140,9 +140,6 @@ export default function Footer() {
             <p className="text-sm text-gray-400 font-sans">
               تمامی حقوق محفوظ است © {currentYear}
             </p>
-            <a href="/admin/login" className="text-gray-300 hover:text-primary-pink transition-colors p-1 opacity-50 hover:opacity-100" title="ورود مدیریت">
-              <Lock className="h-3 w-3" />
-            </a>
           </div>
           
           {/* --- امضای کیا دِو (KiyaDev Signature) --- */}
