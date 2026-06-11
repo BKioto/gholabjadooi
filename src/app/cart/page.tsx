@@ -1,9 +1,10 @@
+// مسیر فایل: src/app/cart/page.tsx
 "use client";
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, ShieldCheck, Image as ImageIcon } from "lucide-react";
+import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, ShieldCheck, Image as ImageIcon, Palette } from "lucide-react"; // 👈 آیکون پالت رنگ اضافه شد
 import { useCartStore } from "@/store/cartStore";
 
 export default function CartPage() {
@@ -12,14 +13,12 @@ export default function CartPage() {
   // خواندن توابع و محصولات از حافظه سبد خرید (Zustand)
   const { items, removeFromCart, increaseQuantity, decreaseQuantity, getTotalPrice } = useCartStore();
 
-  // جلوگیری از خطای تضاد سرور و کلاینت
   useEffect(() => {
     setMounted(true);
   }, []);
 
   if (!mounted) return null;
 
-  // محاسبات فاکتور
   const subtotal = getTotalPrice();
   const shippingCost = items.length > 0 ? 50000 : 0; // هزینه ارسال ثابت
   const total = subtotal + shippingCost;
@@ -43,7 +42,7 @@ export default function CartPage() {
               <AnimatePresence>
                 {items.map((item) => (
                   <motion.div 
-                    key={item.id}
+                    key={item.cartItemId} // 👈 تغییر به شناسه یکتای جدید
                     layout
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -52,7 +51,7 @@ export default function CartPage() {
                   >
                     {/* دکمه حذف محصول */}
                     <button 
-                      onClick={() => removeFromCart(item.id)}
+                      onClick={() => removeFromCart(item.cartItemId)} // 👈 تغییر به شناسه یکتای جدید
                       className="absolute top-4 left-4 text-gray-300 hover:text-red-500 transition-colors p-2"
                     >
                       <Trash2 className="w-5 h-5" />
@@ -69,8 +68,21 @@ export default function CartPage() {
 
                     {/* اطلاعات محصول */}
                     <div className="flex-1 text-center sm:text-right w-full mt-4 sm:mt-0">
-                      <h3 className="text-xl font-bold text-text-dark mb-2">{item.title}</h3>
-                      <p className="text-sm font-sans text-gray-400 mb-4">کد: QJ-{item.id.slice(0, 4)}</p>
+                      <h3 className="text-xl font-bold text-text-dark mb-1">{item.title}</h3>
+                      
+                      {/* 👈 نمایش رنگ و کد محصول */}
+                      <div className="flex flex-col sm:flex-row items-center sm:items-start justify-center sm:justify-start gap-2 mb-4">
+                        <p className="text-sm font-sans text-gray-400">کد: QJ-{item.id.slice(0, 4)}</p>
+                        {item.color && (
+                          <>
+                            <span className="hidden sm:inline text-gray-300">|</span>
+                            <p className="text-sm font-sans font-bold text-gray-500 flex items-center gap-1">
+                              <Palette className="w-4 h-4 text-primary-pink" />
+                              رنگ: {item.color}
+                            </p>
+                          </>
+                        )}
+                      </div>
                       
                       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
                         <div className="text-primary-pink font-bold text-lg">
@@ -79,11 +91,11 @@ export default function CartPage() {
                         
                         {/* کنترل تعداد */}
                         <div className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-xl p-1 w-32">
-                          <button onClick={() => decreaseQuantity(item.id)} className="p-2 text-gray-500 hover:text-primary-pink transition-colors">
+                          <button onClick={() => decreaseQuantity(item.cartItemId)} className="p-2 text-gray-500 hover:text-primary-pink transition-colors">
                             <Minus className="w-4 h-4" />
                           </button>
                           <span className="font-bold font-sans text-text-dark">{item.quantity}</span>
-                          <button onClick={() => increaseQuantity(item.id)} className="p-2 text-gray-500 hover:text-primary-pink transition-colors">
+                          <button onClick={() => increaseQuantity(item.cartItemId)} className="p-2 text-gray-500 hover:text-primary-pink transition-colors">
                             <Plus className="w-4 h-4" />
                           </button>
                         </div>

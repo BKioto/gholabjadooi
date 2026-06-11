@@ -14,10 +14,8 @@ export default function CheckoutPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   
-  // 👈 استیت برای ذخیره اطلاعات کارت بانکی
   const [bankInfo, setBankInfo] = useState({ cardNumber: '', cardOwnerName: '' });
 
-  // استیت‌های فرم
   const [formData, setFormData] = useState({
     name: "",
     phone: "",
@@ -33,7 +31,6 @@ export default function CheckoutPage() {
       router.push('/shop');
     }
     
-    // 👈 دریافت اطلاعات کارت از دیتابیس
     const fetchBankInfo = async () => {
       const { data } = await supabase.from('store_settings').select('card_number, card_owner_name').eq('id', 1).single();
       if (data) {
@@ -55,7 +52,6 @@ export default function CheckoutPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  // تابع کپی کردن شماره کارت
   const copyToClipboard = () => {
     if (bankInfo.cardNumber) {
       navigator.clipboard.writeText(bankInfo.cardNumber);
@@ -97,7 +93,8 @@ export default function CheckoutPage() {
         order_id: orderId,
         product_id: item.id,
         quantity: item.quantity,
-        price_at_time: item.price
+        price_at_time: item.price,
+        selected_color: item.color || null // 👈 ذخیره رنگ انتخاب شده در دیتابیس
       }));
 
       const { error: itemsError } = await supabase.from('order_items').insert(orderItemsToInsert);
@@ -251,7 +248,6 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            {/* 👈 باکس نمایش اطلاعات کارت بانکی */}
             <div className="bg-soft-blue/10 border border-soft-blue/30 rounded-2xl p-4 mb-6">
               <p className="text-sm text-text-dark font-bold mb-3 text-center">
                 لطفاً مبلغ فاکتور را به کارت زیر واریز کنید:

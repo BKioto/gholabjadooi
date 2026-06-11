@@ -23,12 +23,16 @@ export default function QuickAddToCartButton({ product }: { product: any }) {
     e.preventDefault(); 
     if (!isOpen) return; // اگر فروشگاه بسته است، کلیک کار نکنه
     
+    // 👈 بررسی می‌کنیم آیا محصول رنگ‌بندی دارد؟ اگر بله، رنگ اول را پیش‌فرض در نظر بگیر
+    const defaultColor = product.attributes?.colors?.[0] || undefined;
+
     addToCart({
       id: product.id,
       title: product.title,
       price: product.price,
       image: product.images?.[0] || '',
       quantity: 1,
+      ...(defaultColor ? { color: defaultColor } : {}) // 👈 ارسال رنگ پیش‌فرض در صورت وجود
     });
   };
 

@@ -3,33 +3,36 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Star, ShieldCheck, Truck, Clock, Minus, Plus, Image as ImageIcon, CheckCircle2, Check, Ruler, Sparkles, ZoomIn, X, Lock } from "lucide-react";
+import { ShoppingBag, Star, ShieldCheck, Truck, Clock, Minus, Plus, Image as ImageIcon, CheckCircle2, Check, Ruler, Sparkles, ZoomIn, X, Lock, Palette } from "lucide-react"; // 👈 آیکون Palette برای رنگ‌بندی اضافه شد
 import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
 
-// 👈 اضافه شدن isStoreOpen به پراپ‌های کامپوننت
 export default function ProductDetailsClient({ product, isStoreOpen = true }: { product: any, isStoreOpen?: boolean }) {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [mainImage, setMainImage] = useState(product.images && product.images.length > 0 ? product.images[0] : "");
-  
-  // State برای باز و بسته شدن گالری تمام‌صفحه
   const [isFullscreen, setIsFullscreen] = useState(false);
   
+  // 👈 سیستم هوشمند تشخیص رنگ‌بندی
+  // چک می‌کنیم آیا در دیتابیس برای این محصول آرایه‌ای به نام colors ثبت شده یا نه
+  const availableColors = product.attributes?.colors || []; 
+  // استیت رنگ انتخاب شده (اگر رنگی وجود داشت، اولی پیش‌فرض انتخاب میشه)
+  const [selectedColor, setSelectedColor] = useState<string>(availableColors.length > 0 ? availableColors[0] : "");
+
   const addToCart = useCartStore((state) => state.addToCart);
 
   const increase = () => {
-    if (!isStoreOpen) return; // اگر بسته بود، دکمه کار نکنه
+    if (!isStoreOpen) return;
     setQuantity(prev => prev + 1);
   };
   
   const decrease = () => {
-    if (!isStoreOpen) return; // اگر بسته بود، دکمه کار نکنه
+    if (!isStoreOpen) return;
     setQuantity(prev => (prev > 1 ? prev - 1 : 1));
   };
 
   const handleAddToCart = () => {
-    if (!isStoreOpen) return; // جلوگیری از اضافه شدن به سبد در صورت بسته بودن فروشگاه
+    if (!isStoreOpen) return;
 
     addToCart({
       id: product.id,
@@ -37,6 +40,8 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
       price: product.price,
       image: product.images && product.images.length > 0 ? product.images[0] : "",
       quantity: quantity,
+      // 👈 اگر رنگی انتخاب شده بود، اون رو هم به سبد خرید پاس بده
+      ...(selectedColor ? { color: selectedColor } : {}) 
     });
     
     setIsAdded(true);
@@ -46,7 +51,6 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
   const productSize = product.attributes?.size || "سایز استاندارد";
   const prepTime = product.attributes?.prep_time || "۲ الی ۳ روز کاری";
 
-  // جلوگیری از اسکرول صفحه وقتی گالری تمام‌صفحه باز است
   useEffect(() => {
     if (isFullscreen) {
       document.body.style.overflow = "hidden";
@@ -59,7 +63,6 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
   return (
     <>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* مسیر راهنما */}
         <div className="text-sm font-sans text-gray-400 mb-8 flex gap-2">
           <Link href="/shop" className="hover:text-primary-pink transition-colors">فروشگاه</Link>
           <span>/</span>
@@ -76,10 +79,7 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
           
-          {/* بخش گالری عکس */}
           <div className="flex flex-col gap-4">
-            
-            {/* باکس عکس اصلی */}
             <motion.div 
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
@@ -103,7 +103,6 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
                 )}
               </AnimatePresence>
 
-              {/* آیکون ذره‌بین */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300 flex items-center justify-center z-20">
                 <div className="bg-white/90 backdrop-blur-md p-4 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 shadow-lg flex items-center gap-2">
                   <ZoomIn className="w-6 h-6 text-text-dark" />
@@ -111,14 +110,12 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
                 </div>
               </div>
               
-              {/* بج کیفیت */}
               <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 shadow-sm border border-gray-100 z-10">
                 <CheckCircle2 className="w-5 h-5 text-mint-green" />
                 <span className="text-sm font-bold text-text-dark font-sans">تضمین کیفیت تیم ما</span>
               </div>
             </motion.div>
 
-            {/* ردیف عکس‌های کوچک */}
             {product.images && product.images.length > 1 && (
               <motion.div 
                 initial={{ opacity: 0, y: 20 }}
@@ -141,10 +138,8 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
                 ))}
               </motion.div>
             )}
-            
           </div>
 
-          {/* اطلاعات و خرید */}
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             animate={{ opacity: 1, x: 0 }}
@@ -167,7 +162,6 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
               <span className="text-lg text-gray-400 font-normal">تومان</span>
             </div>
 
-            {/* باکس ویژگی‌ها */}
             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex flex-col gap-3 mt-2">
               <div className="flex items-center gap-3">
                 <Ruler className="w-5 h-5 text-primary-pink" />
@@ -181,11 +175,35 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
               </div>
             </div>
 
-            {/* یادداشت بولد */}
+            {/* 👈 بخش انتخاب رنگ (کاملاً داینامیک و امن) */}
+            {availableColors.length > 0 && (
+              <div className="mt-2">
+                <h4 className="font-bold text-text-dark text-sm mb-3 flex items-center gap-2">
+                  <Palette className="w-5 h-5 text-primary-pink" />
+                  انتخاب رنگ کاموا:
+                </h4>
+                <div className="flex flex-wrap gap-3">
+                  {availableColors.map((color: string, index: number) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedColor(color)}
+                      className={`px-5 py-2.5 rounded-xl text-sm font-bold font-sans transition-all border-2 ${
+                        selectedColor === color
+                          ? "border-primary-pink bg-primary-pink/10 text-primary-pink shadow-sm scale-105"
+                          : "border-gray-200 bg-white text-gray-500 hover:border-primary-pink/40 hover:bg-gray-50"
+                      }`}
+                    >
+                      {color}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div className="bg-red-50/60 border border-red-100 text-red-500 rounded-2xl p-4 flex items-start gap-3 font-sans text-sm font-bold leading-relaxed shadow-sm">
               <Sparkles className="w-5 h-5 shrink-0 mt-0.5 text-red-400 animate-pulse" />
               <p>
-                اصالت دست‌سازه: از آنجا که هر محصول گره‌به‌گره و کاملاً با دست بافته می‌شود، وجود تفاوت‌های ظریف با عکس سایت طبیعی است. این ویژگی باعث می‌شود محصولی که به دستتان می‌رسد، نسخه‌ای اختصاصی و کاملاً منحصربه‌فرد برای شما باشد.
+                اصالت دست‌سازه: از آنجا که هر محصول گره‌به‌گره و کاملاً با دست بافته می‌شود، وجود تفاوت‌های ظریف با عکس سایت طبیعی است.
               </p>
             </div>
 
@@ -193,7 +211,6 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
               {product.description || "توضیحاتی برای این محصول ثبت نشده است."}
             </p>
 
-            {/* دکمه‌های خرید */}
             <div className="flex flex-col sm:flex-row gap-4 mt-4">
               <div className={`flex items-center justify-between border rounded-2xl p-2 w-full sm:w-32 transition-colors ${
                 isStoreOpen ? 'bg-gray-50 border-gray-200' : 'bg-gray-100 border-gray-300 opacity-60'
@@ -217,7 +234,6 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
                 </button>
               </div>
 
-              {/* 👈 دکمه هوشمند خرید (بسته به وضعیت فروشگاه تغییر رنگ و متن می‌دهد) */}
               <button 
                 onClick={handleAddToCart}
                 disabled={isAdded || !isStoreOpen}
@@ -242,7 +258,6 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
         </div>
       </div>
 
-      {/* مودال گالری تمام‌صفحه */}
       <AnimatePresence>
         {isFullscreen && (
           <motion.div

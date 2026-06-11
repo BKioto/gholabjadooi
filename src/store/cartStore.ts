@@ -8,15 +8,17 @@ export interface CartItem {
   price: number;
   image: string;
   quantity: number;
+  color?: string; // 👈 این فیلد برای رنگ اضافه شد (اختیاری)
+  cartItemId: string; // 👈 شناسه یکتا برای جلوگیری از تداخل محصولات هم‌نام با رنگ متفاوت
 }
 
 // تعریف ساختار کل حافظه سبد خرید
 interface CartState {
   items: CartItem[];
-  addToCart: (item: CartItem) => void;
-  removeFromCart: (id: string) => void;
-  increaseQuantity: (id: string) => void;
-  decreaseQuantity: (id: string) => void;
+  addToCart: (item: Omit<CartItem, 'cartItemId'>) => void;
+  removeFromCart: (cartItemId: string) => void;
+  increaseQuantity: (cartItemId: string) => void;
+  decreaseQuantity: (cartItemId: string) => void;
   clearCart: () => void;
   getTotalPrice: () => number;
   getTotalItems: () => number;
@@ -31,40 +33,43 @@ export const useCartStore = create<CartState>()(
       // اضافه کردن محصول به سبد
       addToCart: (item) => {
         const currentItems = get().items;
-        const existingItem = currentItems.find((i) => i.id === item.id);
+        // تولید شناسه یکتا: اگر رنگ داشت ترکیب آیدی و رنگ، اگر نداشت همون آیدی
+        const uniqueId = item.color ? `${item.id}-${item.color}` : item.id;
+        
+        const existingItem = currentItems.find((i) => i.cartItemId === uniqueId);
         
         if (existingItem) {
-          // اگر محصول از قبل بود، فقط تعدادش رو ببر بالا
+          // اگر دقیقاً همین محصول با همین رنگ از قبل بود، فقط تعدادش رو ببر بالا
           set({
             items: currentItems.map((i) =>
-              i.id === item.id ? { ...i, quantity: i.quantity + item.quantity } : i
+              i.cartItemId === uniqueId ? { ...i, quantity: i.quantity + item.quantity } : i
             ),
           });
         } else {
-          // اگر نبود، به عنوان محصول جدید اضافه‌اش کن
-          set({ items: [...currentItems, item] });
+          // اگر نبود، به عنوان آیتم جدید با شناسه یکتا اضافه‌اش کن
+          set({ items: [...currentItems, { ...item, cartItemId: uniqueId }] });
         }
       },
       
-      // حذف کامل یک محصول از سبد
-      removeFromCart: (id) => {
-        set({ items: get().items.filter((i) => i.id !== id) });
+      // حذف کامل یک محصول از سبد بر اساس شناسه یکتا
+      removeFromCart: (cartItemId) => {
+        set({ items: get().items.filter((i) => i.cartItemId !== cartItemId) });
       },
       
       // زیاد کردن تعداد یک محصول
-      increaseQuantity: (id) => {
+      increaseQuantity: (cartItemId) => {
         set({
           items: get().items.map((i) =>
-            i.id === id ? { ...i, quantity: i.quantity + 1 } : i
+            i.cartItemId === cartItemId ? { ...i, quantity: i.quantity + 1 } : i
           ),
         });
       },
       
       // کم کردن تعداد یک محصول
-      decreaseQuantity: (id) => {
+      decreaseQuantity: (cartItemId) => {
         set({
           items: get().items.map((i) =>
-            i.id === id && i.quantity > 1 ? { ...i, quantity: i.quantity - 1 } : i
+            i.cartItemId === cartItemId && i.quantity > 1 ? { ...i, quantity: i.quantity - 1 } : i
           ),
         });
       },
