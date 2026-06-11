@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Star, ShieldCheck, Truck, Clock, Minus, Plus, Image as ImageIcon, CheckCircle2, Check, Ruler, Sparkles, ZoomIn, X, Lock, Palette } from "lucide-react"; // 👈 آیکون Palette برای رنگ‌بندی اضافه شد
+import { ShoppingBag, Star, ShieldCheck, Truck, Clock, Minus, Plus, Image as ImageIcon, CheckCircle2, Check, Ruler, Sparkles, ZoomIn, X, Lock, Palette } from "lucide-react";
 import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
 
@@ -13,7 +13,6 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
   const [mainImage, setMainImage] = useState(product.images && product.images.length > 0 ? product.images[0] : "");
   const [isFullscreen, setIsFullscreen] = useState(false);
   
-  // 👈 سیستم هوشمند تشخیص رنگ‌بندی
   // چک می‌کنیم آیا در دیتابیس برای این محصول آرایه‌ای به نام colors ثبت شده یا نه
   const availableColors = product.attributes?.colors || []; 
   // استیت رنگ انتخاب شده (اگر رنگی وجود داشت، اولی پیش‌فرض انتخاب میشه)
@@ -40,7 +39,6 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
       price: product.price,
       image: product.images && product.images.length > 0 ? product.images[0] : "",
       quantity: quantity,
-      // 👈 اگر رنگی انتخاب شده بود، اون رو هم به سبد خرید پاس بده
       ...(selectedColor ? { color: selectedColor } : {}) 
     });
     
@@ -175,7 +173,6 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
               </div>
             </div>
 
-            {/* 👈 بخش انتخاب رنگ (کاملاً داینامیک و امن) */}
             {availableColors.length > 0 && (
               <div className="mt-2">
                 <h4 className="font-bold text-text-dark text-sm mb-3 flex items-center gap-2">
@@ -207,9 +204,10 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
               </p>
             </div>
 
-            <p className="text-lg text-text-dark/70 font-sans leading-relaxed text-justify mt-2">
-              {product.description || "توضیحاتی برای این محصول ثبت نشده است."}
-            </p>
+            <div 
+              className="text-lg text-text-dark/70 font-sans leading-relaxed text-justify mt-2" 
+              dangerouslySetInnerHTML={{ __html: product.description || "توضیحاتی برای این محصول ثبت نشده است." }} 
+            />
 
             <div className="flex flex-col sm:flex-row gap-4 mt-4">
               <div className={`flex items-center justify-between border rounded-2xl p-2 w-full sm:w-32 transition-colors ${
