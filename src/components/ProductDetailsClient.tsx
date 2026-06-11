@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Star, ShieldCheck, Truck, Clock, Minus, Plus, Image as ImageIcon, CheckCircle2, Check, Ruler, Sparkles, ZoomIn, X, Lock, Palette } from "lucide-react";
+import { ShoppingBag, Star, ShieldCheck, Truck, Clock, Minus, Plus, Image as ImageIcon, CheckCircle2, Check, Ruler, Sparkles, ZoomIn, X, Lock, Palette, Tag } from "lucide-react";
 import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
 
@@ -13,9 +13,11 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
   const [mainImage, setMainImage] = useState(product.images && product.images.length > 0 ? product.images[0] : "");
   const [isFullscreen, setIsFullscreen] = useState(false);
   
-  // چک می‌کنیم آیا در دیتابیس برای این محصول آرایه‌ای به نام colors ثبت شده یا نه
-  const availableColors = product.attributes?.colors || []; 
-  // استیت رنگ انتخاب شده (اگر رنگی وجود داشت، اولی پیش‌فرض انتخاب میشه)
+  // خواندن ویژگی‌های محصول از دیتابیس
+  const rawAttributes = product.attributes || {};
+  const availableColors = rawAttributes.colors || []; 
+  
+  // استیت رنگ انتخاب شده
   const [selectedColor, setSelectedColor] = useState<string>(availableColors.length > 0 ? availableColors[0] : "");
 
   const addToCart = useCartStore((state) => state.addToCart);
@@ -46,8 +48,31 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
     setTimeout(() => setIsAdded(false), 2000);
   };
 
-  const productSize = product.attributes?.size || "سایز استاندارد";
-  const prepTime = product.attributes?.prep_time || "۲ الی ۳ روز کاری";
+  // =========================================================================
+  // 🪄 سیستم هوشمند و داینامیک نمایش ویژگی‌ها (هماهنگ با دیتابیس)
+  // =========================================================================
+  const displayAttributes: { key: string, value: string, icon: any }[] = [];
+
+  // ۱. بررسی سایز (پشتیبانی از کلید فارسی و انگلیسی)
+  const sizeVal = rawAttributes['سایز'] || rawAttributes['size'] || rawAttributes['ابعاد'] || "سایز استاندارد";
+  displayAttributes.push({ key: 'سایز حدودی', value: sizeVal, icon: Ruler });
+
+  // ۲. بررسی زمان آماده‌سازی
+  const prepTimeVal = rawAttributes['زمان آماده‌سازی'] || rawAttributes['prep_time'] || rawAttributes['زمان'] || "۲ الی ۳ روز کاری";
+  displayAttributes.push({ key: 'زمان آماده‌سازی', value: prepTimeVal, icon: Clock });
+
+  // ۳. استخراج خودکار سایر ویژگی‌های داینامیک ثبت شده در دیتابیس (مثل: جنس، محتویات و...)
+  Object.keys(rawAttributes).forEach(key => {
+    const lowerKey = key.toLowerCase();
+    if (
+      key !== 'colors' && 
+      lowerKey !== 'سایز' && lowerKey !== 'size' && lowerKey !== 'ابعاد' &&
+      lowerKey !== 'زمان آماده‌سازی' && lowerKey !== 'prep_time' && lowerKey !== 'زمان'
+    ) {
+      displayAttributes.push({ key: key, value: String(rawAttributes[key]), icon: Tag });
+    }
+  });
+  // =========================================================================
 
   useEffect(() => {
     if (isFullscreen) {
@@ -160,17 +185,18 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
               <span className="text-lg text-gray-400 font-normal">تومان</span>
             </div>
 
+            {/* بخش جدید رندر داینامیک ویژگی‌ها */}
             <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 flex flex-col gap-3 mt-2">
-              <div className="flex items-center gap-3">
-                <Ruler className="w-5 h-5 text-primary-pink" />
-                <span className="font-bold text-text-dark text-sm">سایز حدودی: </span>
-                <span className="text-sm font-sans text-text-dark/80">{productSize}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Clock className="w-5 h-5 text-soft-blue" />
-                <span className="font-bold text-text-dark text-sm">زمان آماده‌سازی: </span>
-                <span className="text-sm font-sans text-text-dark/80">{prepTime}</span>
-              </div>
+              {displayAttributes.map((attr, index) => {
+                const Icon = attr.icon;
+                return (
+                  <div key={index} className="flex items-start sm:items-center gap-3">
+                    <Icon className="w-5 h-5 text-primary-pink shrink-0" />
+                    <span className="font-bold text-text-dark text-sm whitespace-nowrap">{attr.key}: </span>
+                    <span className="text-sm font-sans text-text-dark/80 leading-relaxed">{attr.value}</span>
+                  </div>
+                );
+              })}
             </div>
 
             {availableColors.length > 0 && (
