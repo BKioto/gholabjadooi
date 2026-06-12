@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, ShieldCheck, Image as ImageIcon, Palette } from "lucide-react"; // 👈 آیکون پالت رنگ اضافه شد
+import { Trash2, Plus, Minus, ArrowLeft, ShoppingBag, ShieldCheck, Image as ImageIcon, Palette, Info } from "lucide-react"; 
 import { useCartStore } from "@/store/cartStore";
 
 export default function CartPage() {
@@ -20,8 +20,8 @@ export default function CartPage() {
   if (!mounted) return null;
 
   const subtotal = getTotalPrice();
-  const shippingCost = items.length > 0 ? 50000 : 0; // هزینه ارسال ثابت
-  const total = subtotal + shippingCost;
+  const packagingCost = items.length > 0 ? 50000 : 0; // 👈 تغییر نام متغیر به هزینه بسته‌بندی
+  const total = subtotal + packagingCost;
 
   return (
     <div className="min-h-screen bg-gray-50/50 py-12">
@@ -42,7 +42,7 @@ export default function CartPage() {
               <AnimatePresence>
                 {items.map((item) => (
                   <motion.div 
-                    key={item.cartItemId} // 👈 تغییر به شناسه یکتای جدید
+                    key={item.cartItemId}
                     layout
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -51,7 +51,7 @@ export default function CartPage() {
                   >
                     {/* دکمه حذف محصول */}
                     <button 
-                      onClick={() => removeFromCart(item.cartItemId)} // 👈 تغییر به شناسه یکتای جدید
+                      onClick={() => removeFromCart(item.cartItemId)}
                       className="absolute top-4 left-4 text-gray-300 hover:text-red-500 transition-colors p-2"
                     >
                       <Trash2 className="w-5 h-5" />
@@ -70,7 +70,6 @@ export default function CartPage() {
                     <div className="flex-1 text-center sm:text-right w-full mt-4 sm:mt-0">
                       <h3 className="text-xl font-bold text-text-dark mb-1">{item.title}</h3>
                       
-                      {/* 👈 نمایش رنگ و کد محصول */}
                       <div className="flex flex-col sm:flex-row items-center sm:items-start justify-center sm:justify-start gap-2 mb-4">
                         <p className="text-sm font-sans text-gray-400">کد: QJ-{item.id.slice(0, 4)}</p>
                         {item.color && (
@@ -114,19 +113,27 @@ export default function CartPage() {
             >
               <h3 className="text-xl font-bold text-text-dark mb-6 border-b border-gray-50 pb-4">خلاصه سفارش</h3>
               
-              <div className="flex flex-col gap-4 font-sans text-text-dark/80 mb-6">
+              <div className="flex flex-col gap-4 font-sans text-text-dark/80 mb-4">
                 <div className="flex justify-between items-center">
                   <span>مبلغ کل محصولات:</span>
                   <span className="font-bold text-text-dark">{subtotal.toLocaleString("fa-IR")} تومان</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span>هزینه بسته‌بندی و ارسال:</span>
-                  <span className="font-bold text-text-dark">{shippingCost.toLocaleString("fa-IR")} تومان</span>
+                <div className="flex justify-between items-center text-gray-500">
+                  <span>هزینه ایمن‌سازی و بسته‌بندی:</span>
+                  <span className="font-bold text-text-dark">{packagingCost.toLocaleString("fa-IR")} تومان</span>
                 </div>
               </div>
 
+              {/* 👈 باکس هشدار محترمانه برای پس‌کرایه */}
+              <div className="mb-6 bg-red-50/80 border border-red-100 rounded-2xl p-4 flex items-start gap-3 text-sm text-red-500 font-sans leading-relaxed shadow-sm">
+                <Info className="w-5 h-5 shrink-0 mt-0.5 text-red-400" />
+                <p>
+                  <strong>توجه:</strong> کرایه پستی به صورت <strong>پس‌کرایه</strong> می‌باشد؛ یعنی هزینه ارسال را هنگام دریافت بسته، درب منزل به مامور پست پرداخت خواهید کرد.
+                </p>
+              </div>
+
               <div className="border-t border-gray-100 pt-6 mb-8 flex justify-between items-center">
-                <span className="text-lg font-bold text-text-dark">مبلغ قابل پرداخت:</span>
+                <span className="text-lg font-bold text-text-dark">مبلغ قابل پرداخت سایت:</span>
                 <span className="text-2xl font-bold text-primary-pink">{total.toLocaleString("fa-IR")} تومان</span>
               </div>
 

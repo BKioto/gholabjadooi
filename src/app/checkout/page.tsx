@@ -4,7 +4,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { User, MapPin, Phone, CreditCard, ShieldCheck, Truck, Loader2, CheckCircle2, Copy } from "lucide-react";
+import { User, MapPin, Phone, CreditCard, ShieldCheck, Truck, Loader2, CheckCircle2, Copy, Info } from "lucide-react";
 import { useCartStore } from "@/store/cartStore";
 import { supabase } from "@/lib/supabase";
 
@@ -44,8 +44,8 @@ export default function CheckoutPage() {
   if (!mounted) return null;
 
   const subtotal = getTotalPrice();
-  const shippingCost = items.length > 0 ? 50000 : 0;
-  const total = subtotal + shippingCost;
+  const packagingCost = items.length > 0 ? 50000 : 0; // 👈 هزینه بسته‌بندی
+  const total = subtotal + packagingCost;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -94,7 +94,7 @@ export default function CheckoutPage() {
         product_id: item.id,
         quantity: item.quantity,
         price_at_time: item.price,
-        selected_color: item.color || null // 👈 ذخیره رنگ انتخاب شده در دیتابیس
+        selected_color: item.color || null
       }));
 
       const { error: itemsError } = await supabase.from('order_items').insert(orderItemsToInsert);
@@ -233,19 +233,27 @@ export default function CheckoutPage() {
               فاکتور و واریز وجه
             </h3>
             
-            <div className="flex flex-col gap-4 font-sans text-text-dark/80 mb-6 border-b border-gray-100 pb-6">
+            <div className="flex flex-col gap-4 font-sans text-text-dark/80 mb-4 border-b border-gray-100 pb-4">
               <div className="flex justify-between items-center">
                 <span>مبلغ محصولات:</span>
                 <span className="font-bold text-text-dark">{subtotal.toLocaleString("fa-IR")} تومان</span>
               </div>
-              <div className="flex justify-between items-center">
-                <span>هزینه بسته‌بندی و ارسال:</span>
-                <span className="font-bold text-text-dark">{shippingCost.toLocaleString("fa-IR")} تومان</span>
+              <div className="flex justify-between items-center text-gray-500">
+                <span>هزینه ایمن‌سازی و بسته‌بندی:</span>
+                <span className="font-bold text-text-dark">{packagingCost.toLocaleString("fa-IR")} تومان</span>
               </div>
               <div className="flex justify-between items-center mt-2 pt-4 border-t border-gray-100">
-                <span className="text-lg font-bold text-text-dark">مبلغ قابل پرداخت:</span>
+                <span className="text-lg font-bold text-text-dark">مبلغ قابل پرداخت سایت:</span>
                 <span className="text-xl font-bold text-primary-pink">{total.toLocaleString("fa-IR")} تومان</span>
               </div>
+            </div>
+
+            {/* 👈 باکس هشدار محترمانه برای پس‌کرایه */}
+            <div className="mb-6 bg-red-50/80 border border-red-100 rounded-2xl p-4 flex items-start gap-3 text-sm text-red-500 font-sans leading-relaxed shadow-sm">
+              <Info className="w-5 h-5 shrink-0 mt-0.5 text-red-400" />
+              <p>
+                <strong>توجه:</strong> کرایه پستی به صورت <strong>پس‌کرایه</strong> می‌باشد؛ یعنی هزینه ارسال را هنگام دریافت بسته، درب منزل به مامور پست پرداخت خواهید کرد.
+              </p>
             </div>
 
             <div className="bg-soft-blue/10 border border-soft-blue/30 rounded-2xl p-4 mb-6">
