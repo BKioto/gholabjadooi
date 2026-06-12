@@ -1,3 +1,4 @@
+// مسیر فایل: src/components/Footer.tsx
 "use client";
 
 import Link from "next/link";
@@ -59,10 +60,10 @@ export default function Footer() {
               <span className="absolute -bottom-2 right-0 w-1/2 h-1 bg-primary-pink rounded-full"></span>
             </h3>
             <p className="text-sm text-gray-500 font-sans">
-              سریع‌ترین راه برای پیگیری سفارشات، ارتباط با ما در پیام‌رسان‌های داخلی است.
+              سریع‌ترین راه برای پیگیری سفارشات، ارتباط با ما در پیام‌رسان‌های داخلی و خارجی است.
             </p>
             
-            <div className="flex gap-4 mt-2">
+            <div className="flex flex-wrap gap-4 mt-2">
               {/* لینک بله */}
               <a href="https://ble.ir/gholabjadooi" target="_blank" rel="noopener noreferrer" className="group">
                 <div className="bg-gray-50 border border-gray-100 p-3.5 rounded-2xl flex items-center justify-center hover:-translate-y-2 hover:shadow-lg transition-all duration-300 w-14 h-14">
@@ -74,6 +75,20 @@ export default function Footer() {
               <a href="https://eitaa.com/gholabjadooi" target="_blank" rel="noopener noreferrer" className="group">
                 <div className="bg-gray-50 border border-gray-100 p-3.5 rounded-2xl flex items-center justify-center hover:-translate-y-2 hover:shadow-lg transition-all duration-300 w-14 h-14">
                   <img src="/eitaa-logo.webp" alt="ایتا" className="w-full h-full object-contain group-hover:scale-110 transition-transform" />
+                </div>
+              </a>
+
+              {/* لینک تلگرام */}
+              <a href="https://t.me/gholabjadooi" target="_blank" rel="noopener noreferrer" className="group">
+                <div className="bg-gray-50 border border-gray-100 p-3.5 rounded-2xl flex items-center justify-center hover:-translate-y-2 hover:shadow-lg transition-all duration-300 w-14 h-14">
+                  <img src="/telegram_icon.webp" alt="تلگرام" className="w-full h-full object-contain group-hover:scale-110 transition-transform" />
+                </div>
+              </a>
+
+              {/* لینک واتساپ */}
+              <a href="https://wa.me/989924230576" target="_blank" rel="noopener noreferrer" className="group">
+                <div className="bg-gray-50 border border-gray-100 p-3.5 rounded-2xl flex items-center justify-center hover:-translate-y-2 hover:shadow-lg transition-all duration-300 w-14 h-14">
+                  <img src="/whatsapp_icon.webp" alt="واتساپ" className="w-full h-full object-contain group-hover:scale-110 transition-transform" />
                 </div>
               </a>
             </div>
