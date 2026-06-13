@@ -1,3 +1,4 @@
+// مسیر فایل: src/components/AnalyticsTracker.tsx
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -14,11 +15,12 @@ export default function AnalyticsTracker() {
     trackedPath.current = pathname;
 
     const trackView = async () => {
-      // ایجاد یک شناسه سشن موقت برای هر کاربر (جهت محاسبه بازدیدکننده یکتا)
-      let sessionId = sessionStorage.getItem("gholab_session_id");
+      // استفاده از localStorage به جای sessionStorage برای محاسبه واقعی بازدیدکننده یکتا
+      let sessionId = localStorage.getItem("gholab_session_id");
       if (!sessionId) {
+        // تولید یک آیدی یکتا و دائمی برای این دستگاه/مرورگر
         sessionId = Math.random().toString(36).substring(2) + Date.now().toString(36);
-        sessionStorage.setItem("gholab_session_id", sessionId);
+        localStorage.setItem("gholab_session_id", sessionId);
       }
 
       // ارسال اطلاعات به سوپابیس در پس‌زمینه
