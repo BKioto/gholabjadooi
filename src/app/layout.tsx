@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import StoreStatusBanner from "@/components/StoreStatusBanner";
+import AnalyticsTracker from "@/components/AnalyticsTracker"; // 👈 کامپوننت آمارگیر اضافه شد
 import { supabase } from "@/lib/supabase";
 
 export const metadata: Metadata = {
@@ -58,23 +59,26 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   
-  // 👈 خواندن وضعیت باز/بسته بودن فروشگاه از دیتابیس (بدون کش)
+  // خواندن وضعیت باز/بسته بودن فروشگاه از دیتابیس
   const { data: settings } = await supabase
     .from('store_settings')
     .select('is_open')
     .eq('id', 1)
     .single();
 
-  const isStoreOpen = settings?.is_open ?? true; // اگر خطایی بود، پیش‌فرض باز باشه
+  const isStoreOpen = settings?.is_open ?? true;
 
   return (
     <html lang="fa" dir="rtl">
       <body className="font-sans antialiased bg-soft-blue text-text-dark">
         
-        {/* بنر هوشمند وضعیت فروشگاه (فقط وقتی بسته است نمایش داده میشه) */}
+        {/* ردیاب آمار زنده - کاملاً نامرئی */}
+        <AnalyticsTracker />
+
+        {/* بنر هوشمند وضعیت فروشگاه */}
         <StoreStatusBanner isOpen={isStoreOpen} />
 
-        {/* نوبار هوشمندی که ساختیم */}
+        {/* نوبار هوشمند */}
         <Navbar />
         
         {/* محتوای متغیر هر صفحه */}
