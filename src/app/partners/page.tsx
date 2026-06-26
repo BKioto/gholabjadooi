@@ -10,16 +10,17 @@ import {
   Network, 
   Bitcoin, 
   ArrowRight,
-  Zap,       // برای Nexus Solana
-  Bot,       // برای Mind Orbit
-  LayoutDashboard, // برای Alpha System
-  Shirt,     // برای Luxe Shop
-  Code2,     // برای KiyaDev
-  Sparkles
+  Zap,       
+  Bot,       
+  LayoutDashboard, 
+  Shirt,     
+  Code2,     
+  Sparkles,
+  Search // 👈 آیکون جستجو برای جابیکس
 } from "lucide-react";
 import Link from "next/link";
 
-// لیست کامل ۹ همکار تجاری و پروژه اکوسیستم ما (بدون قلاب جادویی)
+// لیست کامل ۱۰ همکار تجاری و پروژه اکوسیستم ما (اضافه شدن جابیکس)
 const partners = [
   {
     id: 1,
@@ -128,6 +129,18 @@ const partners = [
     bgColor: "bg-rose-50",
     borderColor: "hover:border-rose-300",
     glow: "hover:shadow-rose-500/10"
+  },
+  {
+    id: 10,
+    title: "جابیکس | Jobix",
+    description: "پلتفرم هوشمند کاریابی و استخدام. مجهز به سیستم ATS پیشرفته و الگوریتم‌های هوش مصنوعی جهت اتصال بهترین استعدادها به برترین شرکت‌ها.",
+    features: ["کاریابی هوشمند", "رزومه‌ساز آنلاین", "سیستم ATS"],
+    url: "https://jobixx.ir", 
+    icon: Search,
+    color: "text-blue-600",
+    bgColor: "bg-blue-50",
+    borderColor: "hover:border-blue-300",
+    glow: "hover:shadow-blue-500/10"
   }
 ];
 
