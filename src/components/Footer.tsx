@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Phone, Code2, ShoppingBag, Info, HelpCircle, Library } from "lucide-react";
+import { Phone, Code2, ShoppingBag, Info, HelpCircle } from "lucide-react";
 
 export default function Footer() {
   // دریافت سال جاری خورشیدی
@@ -17,7 +17,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           
-          {/* ستون اول: درباره برند و پشتیبانی + لینک مخفی و هوشمند پارتنرها */}
+          {/* ستون اول: درباره برند و پشتیبانی */}
           <div className="flex flex-col gap-6 lg:col-span-1">
             <div className="flex items-center gap-3">
               <Link href="/" className="flex items-center gap-3 group w-fit">
@@ -27,15 +27,12 @@ export default function Footer() {
                 <span className="font-display text-3xl text-primary-pink font-bold">قلاب جادویی</span>
               </Link>
 
-              {/* === هک تمیز و هوشمندانه سئو به سبک کیادو (بدون شلوغ کردن منو) === */}
-              <Link 
-                href="/partners" 
-                title="Partners & Projects"
-                className="w-8 h-8 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-primary-pink hover:text-white transition-all opacity-60 hover:opacity-100"
-              >
-                <Library className="w-3.5 h-3.5" />
-              </Link>
-              {/* ========================================================== */}
+              {/* ⚠️ اصلاح مهم: لینک «Partners & Projects» که اینجا بود حذف شد.
+                  دلیل: بخشی از یک شبکه‌ی لینک‌سازیِ متقابل بین چند سایت هم‌مالک
+                  بود که طبق دستورالعمل رسمی گوگل (Link Schemes) ریسک افت رتبه
+                  یا نادیده‌گرفتن کل شبکه توسط گوگل را داشت. صفحه‌ی
+                  src/app/partners هم باید کامل حذف شود؛ یک ریدایرکت ۳۰۱ در
+                  next.config.ts جایگزینش شده تا کسی به خطای ۴۰۴ نخورد. */}
             </div>
             
             {/* متن سئو شده برای معرفی خدمات قلاب‌بافی */}
