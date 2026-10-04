@@ -1,5 +1,13 @@
 import { supabase } from "@/lib/supabase";
 import ShopClient from "@/components/ShopClient";
+import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
+
+export const metadata: Metadata = pageMeta(
+  "/shop",
+  "فروشگاه بافتنی دست‌ساز؛ عروسک، دسته گل و اکسسوری",
+  "فروشگاه آنلاین قلاب جادویی: عروسک آمیگورومی، دسته گل بافتنی، کیف، کلاه، جاکلیدی و دکوری کاموایی دست‌ساز با ارسال به سراسر ایران و امکان سفارش اختصاصی."
+);
 
 // دریافت لحظه‌ای اطلاعات از دیتابیس (سرور ساید - ضد تحریم و فیلتر)
 export const dynamic = 'force-dynamic';

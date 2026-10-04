@@ -1,6 +1,7 @@
 // src/app/sitemap.ts
 import { MetadataRoute } from 'next';
 import { supabase } from '@/lib/supabase';
+import { landingMeta } from '@/data/landing/meta';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.gholabjadooi.ir';
@@ -19,6 +20,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     changeFrequency: route.changeFrequency as any,
     priority: route.priority,
   }));
+
+  // ۱-ب. صفحه‌ی مادر «راهنمای خرید» و ۳۰ صفحه‌ی لندینگ سئو (با تاریخ ثابت؛ هر وقت محتوای صفحه‌ای را عوض کردید، تاریخش را هم عوض کنید)
+  const guideRoutes: MetadataRoute.Sitemap = [
+    { url: `${baseUrl}/guides`, lastModified: new Date('2026-10-04'), changeFrequency: 'weekly', priority: 0.8 },
+    ...landingMeta.map((m) => ({
+      url: `${baseUrl}/${m.slug}`,
+      lastModified: new Date('2026-10-04'),
+      changeFrequency: 'monthly' as const,
+      priority: 0.8,
+    })),
+  ];
 
   // ۲. دریافت دسته‌بندی‌های واقعی از دیتابیس
   const { data: categories } = await supabase
@@ -46,5 +58,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   // ترکیب تمام مسیرها و تولید خروجی برای گوگل
-  return [...staticRoutes, ...categoryRoutes, ...productRoutes];
+  return [...staticRoutes, ...guideRoutes, ...categoryRoutes, ...productRoutes];
 }

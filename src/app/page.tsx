@@ -4,30 +4,35 @@ import Categories from "@/components/Categories";
 import BestSellers from "@/components/BestSellers"; 
 import LatestProducts from "@/components/LatestProducts"; // 👈 کامپوننت جدید اضافه‌شد
 import StoreProductsOverview from "@/components/StoreProductsOverview";
+import PopularSearches from "@/components/landing/PopularSearches"; // 👈 لینک مستقیم از صفحه‌ی اصلی به ۳۰ صفحه‌ی لندینگ سئو
 import { supabase } from "@/lib/supabase"; 
+import type { Metadata } from "next";
 
 // دریافت لحظه‌ای اطلاعات از دیتابیس (سرور ساید - ضد تحریم و فیلتر)
 export const dynamic = 'force-dynamic';
+
+// 👈 canonical صفحه‌ی اصلی (بقیه‌ی متاها از layout می‌آید)
+export const metadata: Metadata = { alternates: { canonical: "/" } };
 
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "WebSite",
-      "@id": "https://gholabjadooi.ir/#website",
-      "url": "https://gholabjadooi.ir",
+      "@id": "https://www.gholabjadooi.ir/#website",
+      "url": "https://www.gholabjadooi.ir",
       "name": "قلاب جادویی",
       "description": "سفارش آنلاین بافتنی و دسته گل کاموایی فانتزی",
       "inLanguage": "fa-IR"
     },
     {
       "@type": "Organization",
-      "@id": "https://gholabjadooi.ir/#organization",
+      "@id": "https://www.gholabjadooi.ir/#organization",
       "name": "قلاب جادویی",
-      "url": "https://gholabjadooi.ir",
+      "url": "https://www.gholabjadooi.ir",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://gholabjadooi.ir/logo.png",
+        "url": "https://www.gholabjadooi.ir/logo.png",
         "caption": "لوگوی قلاب جادویی"
       },
       "description": "تیم حرفه‌ای از مجرب‌ترین و حرفه‌ای‌ترین هنرمندان بافنده دست‌سازه‌های فانتزی کلاف کاموا",
@@ -46,7 +51,9 @@ const jsonLd = {
         "availableLanguage": "Persian"
       },
       "sameAs": [
-        "https://ble.ir/gholabjadooi"
+        "https://ble.ir/gholabjadooi",
+        "https://eitaa.com/gholabjadooi",
+        "https://t.me/gholabjadooi"
       ]
     }
   ]
@@ -98,6 +105,9 @@ export default async function Home() {
       
       {/* متن سئو در پایین‌ترین بخش */}
       <StoreProductsOverview />
+
+      {/* 👈 راهنمای خرید: لینک به همه‌ی صفحات لندینگ */}
+      <PopularSearches />
     </div>
   );
 }

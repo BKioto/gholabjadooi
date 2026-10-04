@@ -1,6 +1,10 @@
 // مسیر فایل: src/app/category/[slug]/page.tsx
 
 import { supabase } from "@/lib/supabase";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
+import { DEFAULT_OG_IMAGE, SITE_NAME, SITE_URL, absUrl, ldJson } from "@/lib/seo";
+import { getCategoryMeta } from "@/data/seo/category-meta";
 import Link from "next/link";
 import { ArrowLeft, Star, Image as ImageIcon } from "lucide-react";
 import QuickAddToCartButton from "@/components/QuickAddToCartButton";
@@ -8,8 +12,30 @@ import QuickAddToCartButton from "@/components/QuickAddToCartButton";
 // 👈 ایمپورت کامپوننت جادویی سئو که ساختیم
 import CategorySeoBox from "@/components/CategorySeoBox"; 
 
+// 👈 لینک‌دهی داخلی به صفحات لندینگ سئو
+import RelatedGuides from "@/components/landing/RelatedGuides";
+import { guidesByCategory } from "@/data/landing/meta";
+
 // دریافت لحظه‌ای اطلاعات از دیتابیس (سرور ساید - ضد تحریم و فیلتر)
 export const dynamic = 'force-dynamic';
+
+// 🪄 سئو: عنوان، توضیحات، canonical و تصویر اشتراک‌گذاری اختصاصی برای هر دسته‌بندی
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
+  const { data: category } = await supabase.from('categories').select('name, image').eq('slug', slug).single();
+  if (!category) return { title: 'دسته‌بندی پیدا نشد', robots: { index: false, follow: false } };
+
+  const m = getCategoryMeta(slug, category.name);
+  const image = absUrl(category.image);
+  const ogImages = image ? [{ url: image, alt: category.name }] : [DEFAULT_OG_IMAGE];
+  return {
+    title: m.title,
+    description: m.description,
+    alternates: { canonical: `/category/${slug}` },
+    openGraph: { type: 'website', locale: 'fa_IR', siteName: SITE_NAME, url: `/category/${slug}`, title: m.title, description: m.description, images: ogImages },
+    twitter: { card: 'summary_large_image', title: m.title, description: m.description, images: [image ?? DEFAULT_OG_IMAGE.url] },
+  };
+}
 
 export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
   
@@ -24,17 +50,8 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     .eq('slug', slug)
     .single();
 
-  // اگر دسته‌بندی پیدا نشد
-  if (!category) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50/50 text-center px-4">
-        <h1 className="text-3xl font-bold text-text-dark mb-4">دسته‌بندی پیدا نشد!</h1>
-        <Link href="/shop" className="text-primary-pink font-bold flex items-center gap-2">
-          بازگشت به فروشگاه <ArrowLeft className="w-5 h-5" />
-        </Link>
-      </div>
-    );
-  }
+  // اگر دسته‌بندی پیدا نشد → ۴۰۴ واقعی (نه صفحه‌ی ۲۰۰ خالی = soft-404)
+  if (!category) notFound();
 
   // ۲. دریافت محصولات مرتبط با این دسته‌بندی
   const { data: products } = await supabase
@@ -43,8 +60,34 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     .eq('category_id', category.id)
     .eq('is_available', true);
 
+  // 👈 داده‌ی ساختاریافته: صفحه‌ی مجموعه + مسیر ناوبری + فهرست محصولات
+  const catUrl = `${SITE_URL}/category/${slug}`;
+  const catMeta = getCategoryMeta(slug, category.name);
+  const ld = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "CollectionPage", "@id": `${catUrl}#webpage`, url: catUrl, name: catMeta.title, description: catMeta.description,
+        inLanguage: "fa-IR", isPartOf: { "@type": "WebSite", name: SITE_NAME, url: SITE_URL }, breadcrumb: { "@id": `${catUrl}#breadcrumb` },
+      },
+      {
+        "@type": "BreadcrumbList", "@id": `${catUrl}#breadcrumb`,
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "خانه", item: SITE_URL },
+          { "@type": "ListItem", position: 2, name: "فروشگاه", item: `${SITE_URL}/shop` },
+          { "@type": "ListItem", position: 3, name: category.name, item: catUrl },
+        ],
+      },
+      {
+        "@type": "ItemList", name: category.name,
+        itemListElement: (products ?? []).map((p: { slug: string; title: string }, i: number) => ({ "@type": "ListItem", position: i + 1, url: `${SITE_URL}/shop/${p.slug}`, name: p.title })),
+      },
+    ],
+  };
+
   return (
     <div className="min-h-screen bg-gray-50/50 pb-20">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: ldJson(ld) }} />
       
       {/* هدر دسته‌بندی با عکس جذاب */}
       <div className="relative bg-white border-b border-gray-100 overflow-hidden">
@@ -117,6 +160,9 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
           </div>
         )}
       </div>
+
+      {/* 👈 لینک به راهنماهای خرید مرتبط با این دسته (صفحات لندینگ سئو) */}
+      <RelatedGuides slugs={guidesByCategory[slug] ?? []} />
 
       {/* 👈 اینم از ضربه نهایی: نمایش باکس سئو در پایین صفحه */}
       <CategorySeoBox slug={slug} />

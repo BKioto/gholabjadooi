@@ -2,6 +2,14 @@
 "use client";
 
 import Link from "next/link";
+import { chipOf } from "@/data/landing/meta";
+
+// 👈 مهم‌ترین صفحات لندینگ سئو برای لینک‌دهی از فوتر همه‌ی صفحات سایت
+const footerGuides = [
+  "buy-crochet-bouquet", "buy-amigurumi-doll", "buy-crochet-girls-accessories", "buy-crochet-bag",
+  "buy-crochet-bucket-hat", "buy-crochet-home-decor", "buy-handmade-gift", "buy-crochet-baby-set",
+  "custom-crochet-doll-from-photo", "wholesale-crochet-gifts", "crochet-handmade-price-list", "crochet-shipping-all-iran",
+];
 import { Phone, Code2, ShoppingBag, Info, HelpCircle } from "lucide-react";
 
 export default function Footer() {
@@ -142,6 +150,17 @@ export default function Footer() {
             </div>
           </div>
 
+        </div>
+
+        {/* --- راهنمای خرید (لینک‌دهی داخلی به صفحات لندینگ سئو) --- */}
+        <div className="mt-12 pt-8 border-t border-gray-100">
+          <h3 className="font-bold text-lg text-text-dark mb-4">راهنمای خرید بافتنی دست‌ساز</h3>
+          <div className="flex flex-wrap gap-x-6 gap-y-3 text-sm text-gray-500 font-sans">
+            {footerGuides.map((s) => (
+              <Link key={s} href={`/${s}`} className="hover:text-primary-pink transition-colors">{chipOf(s)}</Link>
+            ))}
+            <Link href="/guides" className="text-primary-pink font-bold hover:underline">همه‌ی راهنماهای خرید ←</Link>
+          </div>
         </div>
 
         {/* --- نوار پایین فوتر (Bottom Bar) --- */}
