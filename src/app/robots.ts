@@ -1,4 +1,4 @@
-// src/app/robots.ts
+// مسیر فایل: src/app/robots.ts
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
@@ -6,10 +6,9 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: '*',
       allow: '/',
-      // جلوگیری از خزش ربات‌ها در صفحات خصوصی و سبد خرید
-      disallow: ['/cart', '/checkout', '/track-order'], 
+      // جلوگیری از خزش ربات‌ها در صفحات خصوصی، سبد خرید و پنل مدیریت
+      disallow: ['/cart', '/checkout', '/track-order', '/admin'], 
     },
-    // 👈 مشکل اول در این خط برطرف شد (www اضافه شد)
     sitemap: 'https://www.gholabjadooi.ir/sitemap.xml',
   };
 }

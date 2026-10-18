@@ -1,10 +1,12 @@
+// مسیر فایل: src/app/page.tsx
 import Hero from "@/components/Hero";
 import AboutSection from "@/components/AboutSection";
 import Categories from "@/components/Categories";
 import BestSellers from "@/components/BestSellers"; 
-import LatestProducts from "@/components/LatestProducts"; // 👈 کامپوننت جدید اضافه‌شد
+import LatestProducts from "@/components/LatestProducts";
+import FinishedCreationsShowcase from "@/components/FinishedCreationsShowcase"; // 👈 گالری پینترستی آخرین دست‌بافت‌های آماده شده
 import StoreProductsOverview from "@/components/StoreProductsOverview";
-import PopularSearches from "@/components/landing/PopularSearches"; // 👈 لینک مستقیم از صفحه‌ی اصلی به ۳۰ صفحه‌ی لندینگ سئو
+import PopularSearches from "@/components/landing/PopularSearches";
 import { supabase } from "@/lib/supabase"; 
 import type { Metadata } from "next";
 
@@ -66,7 +68,7 @@ export default async function Home() {
     .select('*')
     .order('created_at', { ascending: true });
 
-  // ۲. دریافت اطلاعات ۴ تا از جدیدترین محصولات دیتابیس 👈 کوئری جدید
+  // ۲. دریافت اطلاعات ۴ تا از جدیدترین محصولات دیتابیس
   const { data: latestProducts } = await supabase
     .from('products')
     .select('*, categories(name, slug)')
@@ -79,9 +81,15 @@ export default async function Home() {
     .from('products')
     .select('*, categories(name, slug)')
     .eq('is_available', true)
-    // برای پرفروش‌ها فعلا به صورت صعودی (قدیمی‌ترها) می‌گیریم تا با جدیدترین‌ها فرق کنه
     .order('created_at', { ascending: true }) 
     .limit(4);
+
+  // ۴. دریافت لیست آخرین دست‌بافت‌های آماده شده برای نمایش پینترستی در پایین صفحه
+  const { data: showcaseItems } = await supabase
+    .from('showcase_items')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(24);
 
   return (
     <div>
@@ -94,7 +102,7 @@ export default async function Home() {
       {/* اول دسته‌بندی‌ها برای هدایت سریع مشتری */}
       <Categories categories={categories || []} />
 
-      {/* دوم جدیدترین محصولات برای القای حس پویایی فروشگاه 👈 بخش جدید */}
+      {/* دوم جدیدترین محصولات برای القای حس پویایی فروشگاه */}
       <LatestProducts products={latestProducts || []} />
       
       {/* سوم پرفروش‌ها برای نمایش سریع محصولات جذاب و پرطرفدار */}
@@ -102,11 +110,14 @@ export default async function Home() {
       
       {/* چهارم درباره ما برای اعتمادسازیِ هنری بعد از دیدن محصولات */}
       <AboutSection />
+
+      {/* پنجم گالری پینترستی آخرین دست‌بافت‌های آماده شده در پایین صفحه */}
+      <FinishedCreationsShowcase items={showcaseItems || []} />
       
       {/* متن سئو در پایین‌ترین بخش */}
       <StoreProductsOverview />
 
-      {/* 👈 راهنمای خرید: لینک به همه‌ی صفحات لندینگ */}
+      {/* راهنمای خرید: لینک به همه‌ی صفحات لندینگ */}
       <PopularSearches />
     </div>
   );
