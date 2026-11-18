@@ -81,10 +81,11 @@ const page: LandingPage = {
     { q: "قیمت عروسک سفارشی چقدر است؟", a: "بسته به اندازه، پیچیدگی و مقدار کار متفاوت است و بعد از بررسی طرح اعلام می‌شود. محدوده‌ی قیمت محصولات آماده در [لیست قیمت](/crochet-handmade-price-list) است." },
     { q: "چقدر زمان لازم است؟", a: "بسته به طرح و صف سفارش‌ها متفاوت است؛ زمان دقیق در هماهنگی اولیه اعلام می‌شود. برای مناسبت‌ها چند هفته زودتر اقدام کنید." },
     { q: "آیا می‌توانم عروسک را بعد از ساخت مرجوع کنم؟", a: "به‌دلیل اختصاصی‌بودن، مرجوعی به‌خاطر سلیقه وجود ندارد؛ فقط در صورت نقص آشکار یا مغایرت با فاکتور، ظرف ۲۴ ساعت با عکس به پشتیبانی اطلاع دهید." },
+    { q: "اگر زمان کم دارم، عروسک آماده هم دارید؟", a: "بله؛ مدل‌های آماده‌ی زیادی از جمله خرس تدی، پاندا، تک‌شاخ و نهنگ در [خرید عروسک آمیگورومی](/buy-amigurumi-doll) موجود است. عروسک سفارشی از روی عکس زمان بیشتری می‌خواهد." },
   ],
   match: { categories: ["fantasy-dolls"], limit: 4 },
-  related: ["buy-amigurumi-doll", "buy-crochet-bunny-doll", "handmade-valentine-gift", "handmade-girls-birthday-gift", "crochet-handmade-price-list", "crochet-shipping-all-iran"],
-  updated: "2026-10-04",
+  related: ["buy-amigurumi-doll", "buy-crochet-bunny-doll", "buy-crochet-finger-puppets", "handmade-valentine-gift", "handmade-girls-birthday-gift", "crochet-handmade-price-list", "crochet-shipping-all-iran"],
+  updated: "2026-11-17",
 };
 
 export default page;

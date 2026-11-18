@@ -1,5 +1,5 @@
 // مسیر فایل: src/data/landing/types.ts
-// ساختار داده‌ی صفحات لندینگ سئو (۳۰ صفحه‌ی استاتیک)
+// ساختار داده‌ی صفحات لندینگ سئو (صفحات استاتیک)
 
 export type Block =
   | string // پاراگراف (پشتیبانی از **ضخیم** و [متن لینک](/مسیر))
@@ -26,7 +26,9 @@ export interface ProductMatch {
   words?: string[]; // کلمات مطابقت در عنوان/کلمات کلیدی محصول
   not?: string[]; // کلماتی که محصول نباید داشته باشد
   fill?: string[]; // اگر محصول کم بود، از این دسته‌ها تکمیل شود
-  limit?: number;
+  first?: string[]; // محصولاتی که یکی از این کلمات را دارند، بالاتر از بقیه نمایش داده می‌شوند
+  mix?: boolean; // نمایش متنوع: از هر دسته‌بندی به‌نوبت یک محصول (مناسب صفحات عمومی)
+  limit?: number; // تعداد کارت نمایش‌داده‌شده (پیش‌فرض ۱۲)؛ شمارش و بازه‌ی قیمت از «همه‌ی» محصولات منطبق حساب می‌شود
 }
 
 export type LandingGroup = "category" | "product" | "occasion" | "service" | "city";
@@ -39,6 +41,7 @@ export interface LandingPage {
   metaDescription: string;
   h1: string;
   imageAlt: string;
+  image?: string; // مسیر تصویر شاخص (اگر نباشد: /landing/<slug>.webp)
   intro: string[];
   sections: Section[];
   faqs: Faq[];

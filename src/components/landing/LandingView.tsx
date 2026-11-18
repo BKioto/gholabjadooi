@@ -6,21 +6,22 @@ import Image from "next/image";
 import type { Block, LandingPage } from "@/data/landing/types";
 import { SITE_URL, chipOf } from "@/data/landing/meta";
 import { getLandingPage } from "@/data/landing/pages";
-import { categoryPriceTable, formatToman, pickProducts, priceSummary, type CatalogProduct } from "@/lib/landing-catalog";
+import { DEFAULT_CARD_LIMIT, categoryPriceTable, formatToman, pickProducts, priceSummary, type CatalogProduct } from "@/lib/landing-catalog";
+import { richPlain } from "@/lib/rich-text";
 import Rich from "./Rich";
 
-const plain = (s: string) => s.replace(/\[([^\]]+)\]\([^)]+\)/g, "$1").replace(/\*\*/g, "");
+const fa = (n: number) => n.toLocaleString("fa-IR");
 
 function BlockView({ b }: { b: Block }) {
   if (typeof b === "string") return <p className="text-gray-600 leading-8 font-sans"><Rich text={b} /></p>;
-  if ("h3" in b) return <h3 className="text-xl font-bold text-text-dark pt-2">{b.h3}</h3>;
+  if ("h3" in b) return <h3 className="text-xl font-bold text-text-dark pt-2"><Rich text={b.h3} /></h3>;
   if ("ul" in b) return <ul className="list-disc pr-6 space-y-2 text-gray-600 leading-8 font-sans marker:text-primary-pink">{b.ul.map((t, i) => <li key={i}><Rich text={t} /></li>)}</ul>;
   if ("ol" in b) return <ol className="list-decimal pr-6 space-y-2 text-gray-600 leading-8 font-sans marker:text-primary-pink marker:font-bold">{b.ol.map((t, i) => <li key={i}><Rich text={t} /></li>)}</ol>;
   if ("tip" in b) return <div className="bg-soft-blue/30 border-r-4 border-primary-pink rounded-2xl p-5 text-gray-700 leading-8 font-sans"><Rich text={b.tip} /></div>;
   return (
     <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white">
       <table className="w-full text-sm font-sans text-right">
-        <thead className="bg-soft-blue/30 text-text-dark"><tr>{b.table.head.map((h, i) => <th key={i} className="px-4 py-3 font-bold whitespace-nowrap">{h}</th>)}</tr></thead>
+        <thead className="bg-soft-blue/30 text-text-dark"><tr>{b.table.head.map((h, i) => <th key={i} className="px-4 py-3 font-bold whitespace-nowrap"><Rich text={h} /></th>)}</tr></thead>
         <tbody>{b.table.rows.map((r, i) => <tr key={i} className="border-t border-gray-100">{r.map((c, j) => <td key={j} className="px-4 py-3 text-gray-600 leading-7"><Rich text={c} /></td>)}</tr>)}</tbody>
       </table>
     </div>
@@ -41,9 +42,14 @@ function ProductCard({ p }: { p: CatalogProduct }) {
 
 export default function LandingView({ page, catalog }: { page: LandingPage; catalog: CatalogProduct[] }) {
   const url = `${SITE_URL}/${page.slug}`;
-  const products = pickProducts(catalog, page.match);
-  const summary = priceSummary(products);
-  const cats = [...new Map(products.filter((p) => p.categorySlug && p.categoryName).map((p) => [p.categorySlug!, p.categoryName!])).entries()];
+  const heroSrc = page.image ?? `/landing/${page.slug}.webp`;
+  // همه‌ی محصولات منطبق (برای شمارش و بازه‌ی قیمت)؛ فقط limit اول به‌صورت کارت نمایش داده می‌شود
+  const matched = pickProducts(catalog, { ...page.match, limit: 1000 });
+  const products = matched.slice(0, page.match.limit ?? DEFAULT_CARD_LIMIT);
+  const summary = priceSummary(matched);
+  const shownNote = summary && products.length < summary.count ? ` (${fa(products.length)} مدل در همین صفحه)` : " در همین صفحه";
+  const cats = [...new Map(matched.filter((p) => p.categorySlug && p.categoryName).map((p) => [p.categorySlug!, p.categoryName!])).entries()];
+  const catCount = (slug: string) => catalog.filter((p) => p.categorySlug === slug).length;
   const priceRows = page.showPriceTable ? categoryPriceTable(catalog) : [];
   const date = new Date(page.updated).toLocaleDateString("fa-IR", { year: "numeric", month: "long", day: "numeric" });
 
@@ -52,7 +58,7 @@ export default function LandingView({ page, catalog }: { page: LandingPage; cata
       "@type": "WebPage", "@id": `${url}#webpage`, url, name: page.h1, description: page.metaDescription, inLanguage: "fa-IR",
       isPartOf: { "@type": "WebSite", name: "قلاب جادویی", url: SITE_URL },
       publisher: { "@type": "Organization", name: "قلاب جادویی", url: SITE_URL },
-      primaryImageOfPage: { "@type": "ImageObject", url: `${SITE_URL}/landing/${page.slug}.webp`, width: 1672, height: 941 },
+      primaryImageOfPage: { "@type": "ImageObject", url: `${SITE_URL}${heroSrc}`, width: 1672, height: 941 },
       dateModified: page.updated, breadcrumb: { "@id": `${url}#breadcrumb` },
     },
     {
@@ -63,12 +69,12 @@ export default function LandingView({ page, catalog }: { page: LandingPage; cata
         { "@type": "ListItem", position: 3, name: page.chip, item: url },
       ],
     },
-    { "@type": "FAQPage", mainEntity: page.faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: plain(f.a) } })) },
+    { "@type": "FAQPage", mainEntity: page.faqs.map((f) => ({ "@type": "Question", name: richPlain(f.q), acceptedAnswer: { "@type": "Answer", text: richPlain(f.a) } })) },
     ...(products.length ? [{ "@type": "ItemList", name: page.productsTitle, itemListElement: products.map((p, i) => ({ "@type": "ListItem", position: i + 1, url: `${SITE_URL}/shop/${p.slug}`, name: p.title })) }] : []),
   ];
   const jsonLd = JSON.stringify({ "@context": "https://schema.org", "@graph": graph }).replace(/</g, "\\u003c");
 
-  const toc = [...page.sections.map((s) => ({ id: s.id, t: s.h2 })), { id: "faq", t: "سوالات متداول" }];
+  const toc = [...page.sections.map((s) => ({ id: s.id, t: richPlain(s.h2) })), { id: "faq", t: "سوالات متداول" }];
 
   return (
     <div className="min-h-screen bg-gray-50/50 pb-20">
@@ -90,7 +96,7 @@ export default function LandingView({ page, catalog }: { page: LandingPage; cata
             </div>
             <p className="mt-4 text-xs text-gray-400 font-sans">آخرین به‌روزرسانی: {date} · تهیه‌شده توسط تیم هنرمندان قلاب جادویی</p>
           </div>
-          <Image src={`/landing/${page.slug}.webp`} alt={page.imageAlt} width={1200} height={675} priority sizes="(min-width: 1024px) 480px, 100vw" className="w-full h-auto rounded-3xl shadow-lg bg-soft-blue/20" />
+          <Image src={heroSrc} alt={page.imageAlt} width={1200} height={675} priority sizes="(min-width: 1024px) 480px, 100vw" className="w-full h-auto rounded-3xl shadow-lg bg-soft-blue/20" />
         </header>
 
         <div className="mt-10 grid sm:grid-cols-2 gap-6">
@@ -103,7 +109,7 @@ export default function LandingView({ page, catalog }: { page: LandingPage; cata
           <div className="bg-white rounded-3xl border border-gray-100 p-6">
             <h2 className="font-bold text-text-dark mb-3">خلاصه‌ی سریع</h2>
             <ul className="space-y-2 text-sm font-sans text-gray-600 leading-7">
-              {summary && <li>📦 <strong>{summary.count.toLocaleString("fa-IR")}</strong> مدل آماده‌ی ارسال در همین صفحه</li>}
+              {summary && <li>📦 <strong>{fa(summary.count)}</strong> مدل آماده‌ی ارسال{shownNote}</li>}
               {summary && summary.max > summary.min && <li>💰 قیمت از <strong>{formatToman(summary.min)}</strong> تا <strong>{formatToman(summary.max)}</strong> تومان</li>}
               <li>🚚 ارسال با پست پیشتاز به سراسر ایران (هزینه‌ی پستی به‌صورت پس‌کرایه)</li>
               <li>🎨 امکان سفارش اختصاصی با رنگ و طرح دلخواه</li>
@@ -116,7 +122,7 @@ export default function LandingView({ page, catalog }: { page: LandingPage; cata
             <h2 className="text-2xl font-bold text-text-dark mb-6">{page.productsTitle}</h2>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">{products.map((p) => <ProductCard key={p.id} p={p} />)}</div>
             <div className="mt-6 flex flex-wrap gap-3 text-sm font-bold">
-              {cats.map(([slug, name]) => <Link key={slug} href={`/category/${slug}`} className="text-primary-pink hover:underline">همه‌ی محصولات «{name}» ←</Link>)}
+              {cats.map(([slug, name]) => <Link key={slug} href={`/category/${slug}`} className="text-primary-pink hover:underline">همه‌ی محصولات «{name}» ({fa(catCount(slug))} محصول) ←</Link>)}
               <Link href="/shop" className="text-gray-500 hover:text-primary-pink">مشاهده‌ی کل فروشگاه ←</Link>
             </div>
           </section>
@@ -125,7 +131,7 @@ export default function LandingView({ page, catalog }: { page: LandingPage; cata
         <article className="mt-14 space-y-14">
           {page.sections.map((s, si) => (
             <section key={s.id} id={s.id} className="scroll-mt-24 space-y-4">
-              <h2 className="text-2xl font-bold text-text-dark">{s.h2}</h2>
+              <h2 className="text-2xl font-bold text-text-dark"><Rich text={s.h2} /></h2>
               {s.blocks.map((b, i) => <BlockView key={i} b={b} />)}
               {si === 0 && priceRows.length > 0 && (
                 <div className="overflow-x-auto rounded-2xl border border-gray-100 bg-white">
@@ -145,7 +151,7 @@ export default function LandingView({ page, catalog }: { page: LandingPage; cata
             {page.faqs.map((f, i) => (
               <details key={i} className="group bg-white rounded-2xl border border-gray-100 p-5">
                 <summary className="cursor-pointer list-none flex justify-between items-center gap-4">
-                  <h3 className="text-base font-bold text-text-dark">{f.q}</h3>
+                  <h3 className="text-base font-bold text-text-dark"><Rich text={f.q} /></h3>
                   <span aria-hidden className="text-primary-pink text-2xl leading-none transition-transform group-open:rotate-45">+</span>
                 </summary>
                 <p className="mt-3 text-gray-600 leading-8 font-sans"><Rich text={f.a} /></p>

@@ -113,7 +113,7 @@ export default function ShopClient({ initialProducts, initialCategories }: { ini
                       <ImageIcon className="w-16 h-16 text-soft-blue opacity-50 group-hover:scale-110 transition-transform duration-500" />
                     )}
                     
-                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm">
+                    <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-lg flex items-center gap-1 shadow-sm">
                       <span className="text-xs font-bold text-text-dark mt-1">۵.۰</span>
                       <Star className="w-3 h-3 text-soft-yellow fill-soft-yellow" />
                     </div>

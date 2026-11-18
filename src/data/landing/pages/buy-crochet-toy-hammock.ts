@@ -23,6 +23,13 @@ const page: LandingPage = {
       ],
     },
     {
+      id: "wall-set",
+      h2: "ست کردن دیوار اتاق کودک",
+      blocks: [
+        "اگر دیوار اتاق کودک را کامل می‌کنید، [رویاگیر و دکور دیواری رنگین‌کمان](/buy-crochet-wall-decor) و آویز تخت نوزاد را هم ببینید. آویز تخت طبق توضیح محصول صرفاً دکوری است و باید دور از دسترس نوزاد نصب شود؛ برای اتاق نوزاد، [پتو و ست عکاسی](/buy-crochet-baby-blanket-photo-set) هم‌رنگ آن‌ها انتخاب می‌شود.",
+      ],
+    },
+    {
       id: "install",
       h2: "چطور نصب کنیم؟",
       blocks: [
@@ -75,8 +82,8 @@ const page: LandingPage = {
     { q: "تور آویز را چطور تمیز کنم؟", a: "با برس نرم یا جاروبرقی ملایم؛ در صورت نیاز دستی با آب سرد بشویید و در سایه خشک کنید." },
   ],
   match: { words: ["تور آویز", "بانوج", "ننو"], fill: ["home-decor"], limit: 8 },
-  related: ["buy-amigurumi-doll", "buy-crochet-bunny-doll", "buy-crochet-home-decor", "buy-crochet-baby-set", "buy-handmade-gift", "crochet-handmade-price-list"],
-  updated: "2026-10-04",
+  related: ["buy-amigurumi-doll", "buy-crochet-bunny-doll", "buy-crochet-home-decor", "buy-crochet-wall-decor", "buy-crochet-baby-set", "buy-handmade-gift", "crochet-handmade-price-list"],
+  updated: "2026-11-17",
 };
 
 export default page;

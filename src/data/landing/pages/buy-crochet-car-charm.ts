@@ -30,6 +30,13 @@ const page: LandingPage = {
       ],
     },
     {
+      id: "flower-charm",
+      h2: "آویز آینه‌ی ماشین طرح گل‌های پاستلی",
+      blocks: [
+        "تازه‌ترین مدل، **آویز آینه‌ی ماشین طرح گل‌های پاستلی** است: طول حدود ۲۵ سانتی‌متر، نخ پنبه‌ای و مهره‌های چوبی، ۳ رنگ و ۲ تا ۳ روز کاری آماده‌سازی. آن را طوری ببندید که میدان دید راننده را نگیرد. برای ایده‌های هدیه‌ی کوچک، [مگنت یخچال و سوغات بافتنی](/buy-crochet-fridge-magnet-souvenir) را هم ببینید.",
+      ],
+    },
+    {
       id: "safety",
       h2: "نصب ایمن آویز ماشین",
       blocks: [
@@ -80,10 +87,11 @@ const page: LandingPage = {
     { q: "آیا طرح سفارشی ممکن است؟", a: "بله، رنگ و طرح دلخواه یا شبیه حیوان خانگی را در بله اعلام کنید." },
     { q: "آویز ماشین را چطور تمیز کنم؟", a: "با برس نرم و دستمال نمدار؛ در صورت لزوم دستی و با آب سرد." },
     { q: "ارسال آویز چطور است؟", a: "با پست پیشتاز و بسته‌بندی ایمن؛ هزینه‌ی پستی پس‌کرایه است." },
+    { q: "آویز طرح گل چه اندازه‌ای دارد؟", a: "طول آن حدود ۲۵ سانتی‌متر است و از نخ پنبه‌ای و مهره‌های چوبی ساخته می‌شود؛ ۳ رنگ دارد. آن را طوری نصب کنید که جلوی دید راننده را نگیرد." },
   ],
   match: { words: ["آویز ماشین"], fill: ["fantasy-dolls", "home-decor"], limit: 8 },
-  related: ["buy-amigurumi-doll", "buy-crochet-keychain", "custom-crochet-doll-from-photo", "buy-handmade-gift", "buy-crochet-home-decor", "buy-handmade-crochet-ahvaz"],
-  updated: "2026-10-04",
+  related: ["buy-amigurumi-doll", "buy-crochet-keychain", "custom-crochet-doll-from-photo", "buy-handmade-gift", "buy-crochet-home-decor", "buy-handmade-crochet-ahvaz", "buy-crochet-fridge-magnet-souvenir"],
+  updated: "2026-11-17",
 };
 
 export default page;

@@ -24,6 +24,13 @@ const page: LandingPage = {
       ],
     },
     {
+      id: "trivet",
+      h2: "از زیرلیوانی تا زیرقابلمه و رومیزی",
+      blocks: [
+        "اگر زیرلیوانی‌ها را دوست دارید، **زیرقابلمه‌ای طرح آفتابگردان** هم ساخته شده: قطر حدود ۱۸ سانتی‌متر، نخ پنبه‌ای ضخیم و ۲ تا ۳ روز کاری. طبق توضیح محصول زیر ظرف گرم مناسب است و نباید روی شعله‌ی مستقیم قرار بگیرد. برای کامل‌کردن میز، [رومیزی دوایلی بافتنی](/buy-crochet-doily-tablecloth) را کنار آن‌ها بگذارید.",
+      ],
+    },
+    {
       id: "types",
       h2: "مدل‌ها و ایده‌های ست‌کردن",
       blocks: [
@@ -73,10 +80,11 @@ const page: LandingPage = {
     { q: "اندازه‌ی استاندارد زیرلیوانی چقدر است؟", a: "قطر ۱۰ تا ۱۲ سانتی‌متر برای فنجان و لیوان کافی است؛ برای ماگ بزرگ، اندازه‌ی بزرگ‌تر سفارش بدهید." },
     { q: "می‌توانم ست چندتایی با رنگ دلخواه سفارش بدهم؟", a: "بله؛ تعداد و رنگ‌ها را در بله اعلام کنید تا قیمت و زمان اعلام شود." },
     { q: "زیرلیوانی را به‌صورت عمده هم می‌فروشید؟", a: "بله، برای مراسم و هدیه‌های دسته‌جمعی؛ جزئیات در [سفارش عمده](/wholesale-crochet-gifts) است." },
+    { q: "زیرقابلمه‌ی بافتنی را می‌شود روی گاز گذاشت؟", a: "نه؛ طبق توضیح محصول زیر ظرف گرم مناسب است، ولی روی شعله‌ی مستقیم نباید قرار بگیرد." },
   ],
   match: { words: ["زیرلیوانی", "کوستر"], fill: ["home-decor"], limit: 8 },
-  related: ["buy-crochet-home-decor", "buy-crochet-plant-pot", "buy-crochet-toy-hammock", "buy-handmade-gift", "wholesale-crochet-gifts", "crochet-handmade-price-list"],
-  updated: "2026-10-04",
+  related: ["buy-crochet-home-decor", "buy-crochet-doily-tablecloth", "buy-crochet-plant-pot", "buy-crochet-toy-hammock", "buy-handmade-gift", "wholesale-crochet-gifts", "crochet-handmade-price-list"],
+  updated: "2026-11-17",
 };
 
 export default page;

@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Star, ShieldCheck, Truck, Clock, Minus, Plus, Image as ImageIcon, CheckCircle2, Check, Ruler, Sparkles, ZoomIn, X, Lock, Palette, Tag } from "lucide-react";
+import { ShoppingBag, Star, Clock, Minus, Plus, Image as ImageIcon, Check, Ruler, Sparkles, ZoomIn, X, Lock, Palette, Tag } from "lucide-react";
 import Link from "next/link";
 import { useCartStore } from "@/store/cartStore";
 
@@ -131,11 +131,6 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
                   <ZoomIn className="w-6 h-6 text-text-dark" />
                   <span className="text-sm font-bold text-text-dark font-sans hidden sm:block">بزرگنمایی</span>
                 </div>
-              </div>
-              
-              <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 shadow-sm border border-gray-100 z-10">
-                <CheckCircle2 className="w-5 h-5 text-mint-green" />
-                <span className="text-sm font-bold text-text-dark font-sans">تضمین کیفیت تیم ما</span>
               </div>
             </motion.div>
 
@@ -293,7 +288,7 @@ export default function ProductDetailsClient({ product, isStoreOpen = true }: { 
           >
             <button
               onClick={() => setIsFullscreen(false)}
-              className="absolute top-6 right-6 p-3 bg-white/10 hover:bg-red-500/80 rounded-full text-white transition-all z-50 shadow-lg backdrop-blur-md"
+              className="absolute top-6 left-6 p-3 bg-white/10 hover:bg-red-500/80 rounded-full text-white transition-all z-50 shadow-lg backdrop-blur-md"
             >
               <X className="w-8 h-8" />
             </button>

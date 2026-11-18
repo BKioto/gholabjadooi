@@ -62,7 +62,7 @@ const page: LandingPage = {
         {
           ol: [
             "تاپ را وارونه کنید تا جزئیات روی دیواره‌ی ظرف نمالد.",
-            "فقط دستی، با آب سرد و شامپوی ملایم بشویید؛ ماشین لباسشویی توصیه نمی‌شود.",
+            "فقط دستی، با آب سرد (حداکثر ۳۰ درجه) و مایع لباسشویی ملایم بشویید؛ ماشین لباسشویی توصیه نمی‌شود.",
             "آب را بدون پیچاندن بگیرید.",
             "روی حوله‌ی صاف و در سایه خشک کنید؛ آویزان‌کردن در حالت خیس باعث کش‌آمدن می‌شود.",
             "در کشو تا کنید و روی هم زیاد نچینید.",
@@ -80,7 +80,7 @@ const page: LandingPage = {
   ],
   match: { words: ["کراپ", "تاپ"], limit: 8 },
   related: ["buy-crochet-bucket-hat", "buy-crochet-bag", "buy-crochet-bandana", "buy-crochet-girls-accessories", "buy-handmade-crochet-ahvaz", "handmade-girls-birthday-gift"],
-  updated: "2026-10-04",
+  updated: "2026-11-17",
 };
 
 export default page;

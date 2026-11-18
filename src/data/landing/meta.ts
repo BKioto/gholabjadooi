@@ -30,6 +30,17 @@ export const landingMeta: { slug: string; chip: string; group: LandingGroup }[] 
   { slug: "buy-crochet-plant-pot", chip: "گلدان و کاکتوس بافتنی", group: "product" },
   { slug: "buy-crochet-car-charm", chip: "آویز ماشین بافتنی", group: "product" },
   { slug: "buy-crochet-toy-hammock", chip: "تور آویز عروسک", group: "product" },
+  { slug: "buy-crochet-winter-accessories", chip: "شال گردن و دستکش بافتنی", group: "product" },
+  { slug: "buy-crochet-beret-hat", chip: "کلاه برت بافتنی", group: "product" },
+  { slug: "buy-crochet-bridal-bouquet", chip: "دسته گل عروس بافتنی", group: "product" },
+  { slug: "buy-crochet-doily-tablecloth", chip: "رومیزی دوایلی بافتنی", group: "product" },
+  { slug: "buy-crochet-rope-basket-rug", chip: "سبد و فرشینه ریسمانی", group: "product" },
+  { slug: "buy-crochet-baby-blanket-photo-set", chip: "پتو نوزادی و ست عکاسی", group: "product" },
+  { slug: "buy-crochet-wall-decor", chip: "دکور دیواری بافتنی", group: "product" },
+  { slug: "buy-crochet-fridge-magnet-souvenir", chip: "مگنت یخچال و سوغات بافتنی", group: "product" },
+  { slug: "buy-crochet-finger-puppets", chip: "عروسک انگشتی بافتنی", group: "product" },
+  { slug: "buy-crochet-hair-accessories", chip: "اسکرانچی و اکسسوری مو", group: "product" },
+  { slug: "buy-crochet-earrings-brooch", chip: "گوشواره و سنجاق سینه", group: "product" },
   { slug: "handmade-girls-birthday-gift", chip: "هدیه تولد دخترانه", group: "occasion" },
   { slug: "handmade-yalda-gift", chip: "هدیه شب یلدا", group: "occasion" },
   { slug: "handmade-valentine-gift", chip: "هدیه ولنتاین", group: "occasion" },
@@ -62,30 +73,45 @@ export function normalizeFa(s: string): string {
 
 // ─── لینک‌دهی داخلی: از هر دسته‌بندی به صفحات لندینگ مرتبط ───
 export const guidesByCategory: Record<string, string[]> = {
-  "everlasting-bouquets": ["buy-crochet-bouquet", "handmade-valentine-gift", "handmade-mothers-day-gift", "buy-crochet-bouquet-isfahan"],
-  "fantasy-dolls": ["buy-amigurumi-doll", "buy-crochet-bunny-doll", "custom-crochet-doll-from-photo", "buy-crochet-doll-tehran"],
-  "home-decor": ["buy-crochet-home-decor", "buy-crochet-coaster", "buy-crochet-plant-pot", "buy-crochet-toy-hammock"],
-  accessories: ["buy-crochet-girls-accessories", "buy-crochet-bag", "buy-crochet-bucket-hat", "buy-crochet-bandana", "buy-crochet-keychain", "buy-crochet-crop-top"],
-  "baby-sets": ["buy-crochet-baby-set", "buy-crochet-bunny-doll", "wholesale-crochet-gifts"],
-  "gifts-and-souvenirs": ["buy-handmade-gift", "wholesale-crochet-gifts", "handmade-yalda-gift", "handmade-girls-birthday-gift", "buy-crochet-keychain"],
+  "everlasting-bouquets": ["buy-crochet-bouquet", "buy-crochet-bridal-bouquet", "handmade-valentine-gift", "handmade-mothers-day-gift", "buy-crochet-bouquet-isfahan"],
+  "fantasy-dolls": ["buy-amigurumi-doll", "buy-crochet-bunny-doll", "buy-crochet-finger-puppets", "custom-crochet-doll-from-photo", "handmade-girls-birthday-gift", "buy-crochet-doll-tehran"],
+  "home-decor": ["buy-crochet-home-decor", "buy-crochet-doily-tablecloth", "buy-crochet-rope-basket-rug", "buy-crochet-wall-decor", "buy-crochet-coaster", "buy-crochet-plant-pot", "buy-crochet-toy-hammock", "handmade-mothers-day-gift", "handmade-yalda-gift"],
+  accessories: ["buy-crochet-girls-accessories", "buy-crochet-winter-accessories", "buy-crochet-beret-hat", "buy-crochet-hair-accessories", "buy-crochet-earrings-brooch", "buy-crochet-bag", "buy-crochet-bucket-hat", "buy-crochet-bandana", "buy-crochet-keychain", "buy-crochet-crop-top", "buy-handmade-crochet-tabriz"],
+  "baby-sets": ["buy-crochet-baby-set", "buy-crochet-baby-blanket-photo-set", "buy-crochet-bunny-doll", "buy-crochet-wall-decor", "wholesale-crochet-gifts"],
+  "gifts-and-souvenirs": ["buy-handmade-gift", "buy-crochet-fridge-magnet-souvenir", "wholesale-crochet-gifts", "handmade-yalda-gift", "handmade-girls-birthday-gift", "handmade-mothers-day-gift", "buy-crochet-keychain", "buy-crochet-finger-puppets", "buy-crochet-earrings-brooch"],
 };
 
-// ─── لینک‌دهی داخلی: از هر محصول به صفحات لندینگ مرتبط (بر اساس عنوان و کلمات کلیدی) ───
+// ─── لینک‌دهی داخلی: از هر محصول به راهنماهای مرتبط (بر اساس کلمات عنوان و کلمات کلیدی) ───
+// ⚠️ متن ورودی قبلاً با normalizeFa یکدست شده است (نیم‌فاصله → فاصله)؛ پس «لاک‌پشت» به‌صورت «لاک پشت» بررسی می‌شود.
+// قانون‌های دقیق‌تر را بالاتر بگذارید؛ خروجی نهایی حداکثر ۶ راهنماست.
 const productRules: { re: RegExp; not?: RegExp; slugs: string[] }[] = [
-  { re: /دسته گل|گل بافتنی|آفتابگردان|لاله|رز /, slugs: ["buy-crochet-bouquet", "handmade-valentine-gift", "handmade-mothers-day-gift"] },
+  { re: /یلدا|هندوانه|انار/, slugs: ["handmade-yalda-gift"] },
+  { re: /دسته گل عروس/, slugs: ["buy-crochet-bridal-bouquet", "buy-crochet-bouquet"] },
+  { re: /دسته گل|گل بافتنی|آفتابگردان|لاله|گل رز|فلاور باکس/, slugs: ["buy-crochet-bouquet", "handmade-valentine-gift", "handmade-mothers-day-gift"] },
+  { re: /انگشتی/, not: /نیم انگشتی/, slugs: ["buy-crochet-finger-puppets", "buy-amigurumi-doll"] },
   { re: /خرگوش/, slugs: ["buy-crochet-bunny-doll", "buy-amigurumi-doll"] },
   { re: /عروسک|آمیگورومی/, slugs: ["buy-amigurumi-doll", "custom-crochet-doll-from-photo"] },
-  { re: /آویز ماشین/, slugs: ["buy-crochet-car-charm"] },
+  { re: /آویز ماشین|آویز آینه ماشین/, slugs: ["buy-crochet-car-charm"] },
   { re: /جاکلیدی|آویز کیف|آویز موبایل/, slugs: ["buy-crochet-keychain"] },
-  { re: /کیف|توت بگ/, not: /آویز کیف|جاکلیدی/, slugs: ["buy-crochet-bag"] },
+  { re: /مگنت|سوغات|یادگاری|باکس هدیه/, slugs: ["buy-crochet-fridge-magnet-souvenir", "buy-handmade-gift", "wholesale-crochet-gifts"] },
+  { re: /گوشواره|سنجاق سینه/, slugs: ["buy-crochet-earrings-brooch", "buy-crochet-girls-accessories"] },
+  { re: /اسکرانچی|کش مو|گیره مو|تل مو|گل سر|باندانای مو/, slugs: ["buy-crochet-hair-accessories", "buy-crochet-girls-accessories"] },
+  { re: /(^| )کیف( |$)|توت بگ/, not: /آویز کیف|جاکلیدی/, slugs: ["buy-crochet-bag"] },
+  { re: /(^| )برت( |$)/, slugs: ["buy-crochet-beret-hat", "buy-crochet-winter-accessories"] },
   { re: /کلاه/, slugs: ["buy-crochet-bucket-hat"] },
+  { re: /شال گردن|دستکش|گوش پوش|هدبند/, slugs: ["buy-crochet-winter-accessories", "buy-handmade-crochet-tabriz", "buy-crochet-girls-accessories"] },
   { re: /باندانا|سربند|اسکارف/, slugs: ["buy-crochet-bandana"] },
   { re: /کراپ|تاپ/, slugs: ["buy-crochet-crop-top"] },
   { re: /زیرلیوانی|کوستر/, slugs: ["buy-crochet-coaster"] },
   { re: /گلدان|کاکتوس/, slugs: ["buy-crochet-plant-pot"] },
   { re: /تور آویز|بانوج|ننو/, slugs: ["buy-crochet-toy-hammock"] },
-  { re: /نوزاد|سیسمونی/, slugs: ["buy-crochet-baby-set"] },
-  { re: /تولد/, slugs: ["handmade-girls-birthday-gift"] },
+  { re: /رومیزی|دوایلی|زیرقابلمه|کاور جعبه دستمال/, slugs: ["buy-crochet-doily-tablecloth", "buy-crochet-home-decor"] },
+  { re: /سبد|فرشینه|ریسمان|کوسن/, slugs: ["buy-crochet-rope-basket-rug", "buy-crochet-home-decor"] },
+  { re: /رویاگیر|رنگین کمان|آویز تخت|دکور دیواری/, slugs: ["buy-crochet-wall-decor", "buy-crochet-home-decor"] },
+  { re: /دکور|دکوری|کاور/, slugs: ["buy-crochet-home-decor", "handmade-mothers-day-gift"] },
+  { re: /پتو|عکاسی|لاوی/, slugs: ["buy-crochet-baby-blanket-photo-set", "buy-crochet-baby-set"] },
+  { re: /نوزاد|سیسمونی|جغجغه|پاپوش/, slugs: ["buy-crochet-baby-set"] },
+  { re: /تولد/, not: /نوزاد|سیسمونی/, slugs: ["handmade-girls-birthday-gift"] },
 ];
 
 export function guidesForProduct(text: string, categorySlug?: string | null, max = 6): string[] {

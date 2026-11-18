@@ -1,6 +1,7 @@
 // مسیر فایل: src/app/[slug]/page.tsx
-// مسیر پویا برای ۳۰ صفحه‌ی لندینگ سئو. با generateStaticParams هر صفحه در زمان بیلد «استاتیک» ساخته می‌شود
-// و با اسلاگ اختصاصی خودش (مثلاً /buy-crochet-bouquet) در دسترس است. هر ۱ ساعت یک‌بار محصولات داخلش تازه می‌شوند.
+// مسیر پویا برای صفحات لندینگ سئو. با generateStaticParams هر صفحه در زمان بیلد «استاتیک» ساخته می‌شود
+// و با اسلاگ اختصاصی خودش (مثلاً /buy-crochet-bouquet) در دسترس است. هر ۵ دقیقه یک‌بار محصولات داخلش تازه می‌شوند
+// (محصول جدید دیتابیس خودکار و بدون هیچ تغییری در کد در لیست صفحه‌ها دیده می‌شود).
 
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -8,8 +9,8 @@ import { landingPages, getLandingPage } from "@/data/landing/pages";
 import { getCatalog } from "@/lib/landing-catalog";
 import LandingView from "@/components/landing/LandingView";
 
-export const dynamicParams = false; // هر آدرسی جز ۳۰ اسلاگ تعریف‌شده، ۴۰۴ می‌دهد
-export const revalidate = 3600;
+export const dynamicParams = false; // هر آدرسی جز اسلاگ‌های ثبت‌شده در landingPages، ۴۰۴ می‌دهد
+export const revalidate = 300; // ۵ دقیقه
 
 export function generateStaticParams() {
   return landingPages.map((p) => ({ slug: p.slug }));
@@ -19,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const page = getLandingPage(slug);
   if (!page) return {};
-  const image = { url: `/landing/${page.slug}.webp`, width: 1672, height: 941, alt: page.imageAlt };
+  const image = { url: page.image ?? `/landing/${page.slug}.webp`, width: 1672, height: 941, alt: page.imageAlt };
   return {
     title: page.metaTitle,
     description: page.metaDescription,

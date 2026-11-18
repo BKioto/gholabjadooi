@@ -23,6 +23,13 @@ const page: LandingPage = {
       ],
     },
     {
+      id: "small-gifts-ahvaz",
+      h2: "هدیه‌ی کوچک از اهواز",
+      blocks: [
+        "اگر می‌خواهید از اهواز هدیه‌ی کوچک و سبکی بفرستید، سنجاق سینه‌ی طرح رز، ست مگنت یخچال و جاکلیدی‌های بافتنی راحت بسته‌بندی می‌شوند و چون سبک‌اند، کرایه‌ی پستی کمی دارند. جدول اندازه و قیمت در [مگنت یخچال و سوغات بافتنی](/buy-crochet-fridge-magnet-souvenir) آمده است؛ برای مراسم‌های پرجمعیت هم [سفارش عمده](/wholesale-crochet-gifts) را ببینید.",
+      ],
+    },
+    {
       id: "climate",
       h2: "بافتنی و گرمای اهواز",
       blocks: [
@@ -66,9 +73,9 @@ const page: LandingPage = {
     { q: "چه محصولی برای هوای گرم اهواز مناسب‌تر است؟", a: "محصولات سبک مثل کلاه باکت، کیف توری و کراپ تاپ؛ و برای ماشین، دور از آفتاب مستقیم نگه دارید." },
     { q: "می‌توانم برای مراسم در اهواز عمده سفارش بدهم؟", a: "بله، با تخفیف عمده؛ حداقل یک ماه قبل از مراسم هماهنگ کنید." },
   ],
-  match: { limit: 8 },
-  related: ["buy-amigurumi-doll", "buy-crochet-bouquet", "buy-crochet-bucket-hat", "buy-handmade-gift", "crochet-shipping-all-iran", "wholesale-crochet-gifts"],
-  updated: "2026-10-04",
+  match: { mix: true, limit: 8 },
+  related: ["buy-amigurumi-doll", "buy-crochet-bouquet", "buy-crochet-bucket-hat", "buy-handmade-gift", "crochet-shipping-all-iran", "wholesale-crochet-gifts", "buy-crochet-fridge-magnet-souvenir"],
+  updated: "2026-11-17",
 };
 
 export default page;

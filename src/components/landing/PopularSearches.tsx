@@ -1,5 +1,5 @@
 // مسیر فایل: src/components/landing/PopularSearches.tsx
-// بلوک «جستجوهای پرطرفدار» برای صفحه‌ی اصلی: لینک مستقیم از قوی‌ترین صفحه‌ی سایت به هر ۳۰ صفحه‌ی لندینگ
+// بلوک «جستجوهای پرطرفدار» برای صفحه‌ی اصلی: لینک مستقیم از قوی‌ترین صفحه‌ی سایت به همه‌ی صفحات لندینگ
 
 import Link from "next/link";
 import { groupLabels, landingMeta } from "@/data/landing/meta";

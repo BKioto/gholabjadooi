@@ -35,7 +35,7 @@ export default function BestSellers({ products }: { products: any[] }) {
                 ) : (
                   <ImageIcon className="w-10 h-10 sm:w-16 sm:h-16 text-soft-blue opacity-50 group-hover:scale-110 transition-transform duration-500" />
                 )}
-                <div className="absolute top-2 right-2 sm:top-3 sm:right-3 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg flex items-center gap-1 shadow-sm">
+                <div className="absolute bottom-2 left-2 sm:bottom-3 sm:left-3 bg-white/90 backdrop-blur-sm px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-lg flex items-center gap-1 shadow-sm">
                   <span className="text-[10px] sm:text-xs font-bold text-text-dark mt-0.5 sm:mt-1">۵.۰</span>
                   <Star className="w-2 h-2 sm:w-3 sm:h-3 text-soft-yellow fill-soft-yellow" />
                 </div>

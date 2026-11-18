@@ -55,10 +55,31 @@ export async function getCatalog(): Promise<CatalogProduct[]> {
   }
 }
 
+// تعداد پیش‌فرض کارت محصول در هر صفحه‌ی لندینگ (اگر match.limit نداشته باشد)
+export const DEFAULT_CARD_LIMIT = 12;
+
+// از هر دسته‌بندی به‌نوبت یک محصول برمی‌دارد (ترتیب داخل هر دسته حفظ می‌شود)
+function interleaveByCategory(list: CatalogProduct[]): CatalogProduct[] {
+  const groups = new Map<string, CatalogProduct[]>();
+  for (const p of list) {
+    const key = p.categorySlug ?? "-";
+    const g = groups.get(key);
+    if (g) g.push(p);
+    else groups.set(key, [p]);
+  }
+  const queues = [...groups.values()];
+  const out: CatalogProduct[] = [];
+  for (let i = 0; out.length < list.length; i++) {
+    for (const q of queues) if (i < q.length) out.push(q[i]);
+  }
+  return out;
+}
+
 export function pickProducts(all: CatalogProduct[], m: ProductMatch, min = 4): CatalogProduct[] {
-  const limit = m.limit ?? 8;
+  const limit = m.limit ?? DEFAULT_CARD_LIMIT;
   const words = (m.words ?? []).map(normalizeFa);
   const not = (m.not ?? []).map(normalizeFa);
+  const first = (m.first ?? []).map(normalizeFa);
   const inCats = (p: CatalogProduct) => !m.categories || (p.categorySlug !== null && m.categories.includes(p.categorySlug));
   let picked = all.filter((p) => {
     if (not.some((w) => p.text.includes(w))) return false;
@@ -67,8 +88,13 @@ export function pickProducts(all: CatalogProduct[], m: ProductMatch, min = 4): C
   });
   if (picked.length < min && m.fill?.length) {
     const ids = new Set(picked.map((p) => p.id));
-    picked = [...picked, ...all.filter((p) => !ids.has(p.id) && p.categorySlug && m.fill!.includes(p.categorySlug))];
+    picked = [...picked, ...all.filter((p) => !ids.has(p.id) && p.categorySlug && m.fill!.includes(p.categorySlug) && !not.some((w) => p.text.includes(w)))];
   }
+  if (first.length) {
+    const isFirst = (p: CatalogProduct) => first.some((w) => p.text.includes(w));
+    picked = [...picked.filter(isFirst), ...picked.filter((p) => !isFirst(p))];
+  }
+  if (m.mix) picked = interleaveByCategory(picked);
   return picked.slice(0, limit);
 }
 
