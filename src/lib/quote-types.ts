@@ -12,6 +12,8 @@ export interface QuoteLine {
   state: "confirmed" | "fluctuation" | "needs_inquiry" | "unavailable";
   inquiryId: number | null;
   lockedUntil: string | null;
+  /** تاریخی که قیمت این محصول آخرین بار تأیید/به‌روز شده (اعتبار ۷ روزه برای همه‌ی مشتری‌ها) */
+  confirmedAt: string | null;
 }
 
 export interface Quote {

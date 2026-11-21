@@ -25,6 +25,7 @@ import { useCartStore } from "@/store/cartStore";
 import { useInquiryStore } from "@/store/inquiryStore";
 import { formatCardNumber, formatNumber, isValidIranMobile, normalizeDigits } from "@/lib/price-utils";
 import { useIsClient } from "@/lib/useIsClient";
+import { formatFaDate } from "@/lib/fa-date";
 import type { Quote } from "@/lib/quote-types";
 
 interface FormState {
@@ -324,9 +325,7 @@ export default function CheckoutPage() {
   }
 
   // ---------------------------------------------------------------- صفحه‌ی اصلی پرداخت
-  const lockText = quote.lockedUntil
-    ? new Date(quote.lockedUntil).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" })
-    : null;
+  const lockText = quote.lockedUntil ? formatFaDate(quote.lockedUntil) : null;
   const unconfirmed = quote.priceMode === "fluctuation" || quote.priceMode === "mixed";
 
   return (
@@ -510,7 +509,7 @@ export default function CheckoutPage() {
               {lockText && !unconfirmed && (
                 <p className="mt-3 text-sm text-gray-500 flex items-center gap-1">
                   <Clock className="w-4 h-4" aria-hidden="true" />
-                  قیمت‌ها تا ساعت {lockText} معتبر است
+                  قیمت‌ها تا تاریخ {lockText} معتبر است
                 </p>
               )}
             </div>

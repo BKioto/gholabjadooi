@@ -12,7 +12,7 @@ const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 export type ItemState =
   | { kind: "idle" }
   | { kind: "waiting"; stage: "queued" | "asking"; queueAhead: number; since: string }
-  | { kind: "answered"; previous: number; final: number; lockedUntil: string }
+  | { kind: "answered"; previous: number; final: number; lockedUntil: string; confirmedAt?: string }
   | { kind: "expired" };
 
 export type AskProblem = "rate_limited" | "store_closed" | "network" | "server" | null;
@@ -48,7 +48,13 @@ export function computeItemState(inq: CustomerInquiry | undefined, nowMs: number
   }
   if (inq.status === "answered" && inq.finalPrice != null && inq.lockedUntil) {
     if (Date.parse(inq.lockedUntil) > nowMs) {
-      return { kind: "answered", previous: inq.previousPrice, final: inq.finalPrice, lockedUntil: inq.lockedUntil };
+      return {
+        kind: "answered",
+        previous: inq.previousPrice,
+        final: inq.finalPrice,
+        lockedUntil: inq.lockedUntil,
+        confirmedAt: inq.answeredAt ?? undefined,
+      };
     }
     return { kind: "expired" };
   }

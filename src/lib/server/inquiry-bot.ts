@@ -169,6 +169,8 @@ function resultText(row: InquiryRow, oldPrice: number, newPrice: number, changed
     `💰 قیمت نهایی: ${formatToman(newPrice)}`,
     `(${tomanInWords(newPrice)})`,
     changed ? `🔄 قبلاً: ${formatToman(oldPrice)} — ${diffText(oldPrice, newPrice)}` : "👌 قیمت تغییری نکرد",
+    "",
+    "🗓 این قیمت تا ۷ روز برای همه‌ی مشتری‌ها معتبر است؛ در این مدت دیگر برای این محصول پیام استعلام نمی‌آید.",
   ].join("\n");
 }
 

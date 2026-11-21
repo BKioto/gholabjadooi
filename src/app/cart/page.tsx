@@ -23,10 +23,18 @@ import {
 } from "lucide-react";
 import { useCartStore, type CartItem } from "@/store/cartStore";
 import { useInquiryStore } from "@/store/inquiryStore";
-import { computeItemState, useInquiries, useResumeFromLink, useServerNow, type AskProblem } from "@/lib/useInquiries";
+import {
+  computeItemState,
+  useInquiries,
+  useResumeFromLink,
+  useServerNow,
+  type AskProblem,
+  type ItemState,
+} from "@/lib/useInquiries";
 import { useCartQuote } from "@/lib/useCartQuote";
 import { useIsClient } from "@/lib/useIsClient";
 import { formatNumber } from "@/lib/price-utils";
+import { formatFaDate } from "@/lib/fa-date";
 import PriceBox from "@/components/cart/PriceBox";
 import SaveForLater from "@/components/cart/SaveForLater";
 
@@ -60,7 +68,9 @@ export default function CartPage() {
     .join(",");
 
   // قیمت به‌روز از سرور (قیمت داخل مرورگر ممکن است قدیمی باشد)
-  const quote = useCartQuote(items, token, acceptFluctuation, inquiryKey);
+  // با هر بار «استعلام» این شمارنده بالا می‌رود تا قیمتِ تازه‌ی سرور دوباره گرفته شود
+  const [quoteTick, setQuoteTick] = useState(0);
+  const quote = useCartQuote(items, token, acceptFluctuation, `${inquiryKey}|${quoteTick}`);
 
   const quotePrice = useCallback(
     (productId: string): number | null => {
@@ -74,7 +84,37 @@ export default function CartPage() {
 
   const { busy, problem, storeOpen, hasWaiting, ask, cancel, clearProblem } = useInquiries(items, priceOf);
 
-  const stateOf = useCallback((productId: string) => computeItemState(inquiries[productId], now), [inquiries, now]);
+  // استعلام فقط برای «یک» محصول انجام می‌شود؛ بعد از آن قیمتِ تازه‌ی سرور دوباره گرفته می‌شود
+  // (اگر قیمت همان محصول در این فاصله تأیید شده باشد، همان لحظه نشان داده می‌شود)
+  const askOne = useCallback(
+    async (productId: string) => {
+      await ask([productId]);
+      setQuoteTick((t) => t + 1);
+    },
+    [ask]
+  );
+
+  // وضعیت قیمت هر محصول:
+  //  ۱) اگر قیمتش در ۷ روز اخیر (با استعلامِ هر مشتری) تأیید شده باشد، همان تأییدیه‌ی مشترک نشان داده می‌شود
+  //  ۲) وگرنه از روی استعلامِ خودِ مشتری
+  const stateOf = useCallback(
+    (productId: string): ItemState => {
+      const line = quote?.lines.find((l) => l.productId === productId);
+      if (line && line.state === "confirmed" && line.confirmedAt && line.lockedUntil) {
+        const own = computeItemState(inquiries[productId], now);
+        const inCartPrice = items.find((i) => i.id === productId)?.price ?? line.unitPrice;
+        return {
+          kind: "answered",
+          previous: own.kind === "answered" ? own.previous : inCartPrice,
+          final: line.unitPrice,
+          lockedUntil: line.lockedUntil,
+          confirmedAt: line.confirmedAt,
+        };
+      }
+      return computeItemState(inquiries[productId], now);
+    },
+    [quote, items, inquiries, now]
+  );
 
   const unavailable = useMemo(
     () => new Set((quote?.lines ?? []).filter((l) => l.state === "unavailable").map((l) => l.productId)),
@@ -86,10 +126,7 @@ export default function CartPage() {
   const answeredCount = states.filter((s) => s.kind === "answered").length;
   const hasUnavailable = productIds.some((pid) => unavailable.has(pid));
   const allAnswered = productIds.length > 0 && answeredCount === productIds.length;
-  const needAsk = productIds.filter((pid) => {
-    const kind = stateOf(pid).kind;
-    return (kind === "idle" || kind === "expired") && !unavailable.has(pid);
-  });
+  // (دکمه‌ی «استعلام همه‌ی محصولات» برداشته شد؛ استعلام فقط برای هر محصول جداگانه انجام می‌شود)
   const canContinue = (allAnswered || acceptFluctuation) && !hasUnavailable;
 
   // قیمت واقعیِ هر محصول: اگر جواب آمده همان، وگرنه قیمت امروز سایت
@@ -108,9 +145,7 @@ export default function CartPage() {
     .filter((s): s is Extract<typeof s, { kind: "answered" }> => s.kind === "answered")
     .map((s) => Date.parse(s.lockedUntil))
     .reduce<number | null>((min, v) => (min === null || v < min ? v : min), null);
-  const lockText = earliestLock
-    ? new Date(earliestLock).toLocaleTimeString("fa-IR", { hour: "2-digit", minute: "2-digit" })
-    : null;
+  const lockText = earliestLock ? formatFaDate(earliestLock) : null;
 
   // اگر خیلی منتظر مانده
   const oldestWait = states
@@ -215,6 +250,8 @@ export default function CartPage() {
                     <p>
                       قیمت‌ها گاهی با نوسان بازار تغییر می‌کنند. اگر می‌خواهی مطمئن باشی، قیمت امروز هر محصول را از هنرمند ما
                       بپرس؛ معمولاً چند دقیقه بیشتر طول نمی‌کشد.
+                      قیمتِ هر محصول بعد از به‌روزرسانی تا ۷ روز معتبر می‌ماند؛ تاریخ آخرین به‌روزرسانی را زیر همان
+                      محصول می‌بینی و نیازی به استعلام دوباره نیست.
                     </p>
                   </div>
                 )}
@@ -298,7 +335,7 @@ export default function CartPage() {
                               currentPrice={priceOf(item)}
                               busy={busy}
                               storeOpen={storeOpen}
-                              onAsk={() => ask([item.id])}
+                              onAsk={() => void askOne(item.id)}
                             />
                           )}
                           {item.quantity > 1 && !isUnavailable && (
@@ -331,7 +368,7 @@ export default function CartPage() {
                     {lockText && (
                       <p className="text-sm text-gray-600 mt-1 flex items-center gap-1">
                         <Clock className="w-4 h-4" aria-hidden="true" />
-                        تا ساعت {lockText} معتبر است
+                        تا تاریخ {lockText} معتبر است
                       </p>
                     )}
                   </div>
@@ -403,15 +440,17 @@ export default function CartPage() {
                     منتظر جواب هنرمند…
                   </div>
                 ) : (
-                  <button
-                    type="button"
-                    onClick={() => ask(needAsk)}
-                    disabled={busy || !storeOpen || needAsk.length === 0}
-                    className="w-full bg-primary-pink text-white flex items-center justify-center gap-2 py-4 min-h-14 rounded-2xl font-bold text-lg hover:shadow-lg hover:scale-[1.02] transition-all disabled:opacity-60 disabled:hover:scale-100"
+                  <div
+                    role="status"
+                    className="w-full bg-gray-100 text-gray-600 flex items-start gap-2 p-4 rounded-2xl font-sans text-sm leading-relaxed"
                   >
-                    {busy ? <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" /> : null}
-                    {answeredCount > 0 ? "قیمت بقیه‌ی محصولات را هم بپرس" : "قیمت امروز همه‌ی محصولات را بپرس"}
-                  </button>
+                    <Info className="w-5 h-5 shrink-0 mt-0.5" aria-hidden="true" />
+                    <p>
+                      {hasUnavailable
+                        ? "یکی از محصولات الان موجود نیست؛ آن را از سبد حذف کن تا بتوانی ادامه بدهی."
+                        : "برای ادامه، زیر هر محصول روی «استعلام قیمت امروز» بزن؛ یا گزینه‌ی «نوسان قیمت برایم مشکلی ندارد» را انتخاب کن."}
+                    </p>
+                  </div>
                 )}
 
                 {/* گزینه‌ی دوم: بدون انتظار */}

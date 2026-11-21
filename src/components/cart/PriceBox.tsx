@@ -2,8 +2,9 @@
 // بخش قیمت هر محصول در سبد خرید: قیمت امروز، در حال استعلام، قیمت نهایی، یا اعتبار تمام‌شده.
 "use client";
 
-import { Loader2, CheckCircle2, MessageCircleQuestion, TrendingUp, TrendingDown, RefreshCw } from "lucide-react";
+import { Loader2, CheckCircle2, MessageCircleQuestion, TrendingUp, TrendingDown, RefreshCw, CalendarCheck } from "lucide-react";
 import { formatNumber } from "@/lib/price-utils";
+import { formatFaDate } from "@/lib/fa-date";
 import type { ItemState } from "@/lib/useInquiries";
 
 interface Props {
@@ -45,6 +46,20 @@ export default function PriceBox({ state, currentPrice, busy, storeOpen, onAsk }
 
   if (state.kind === "answered") {
     const diff = state.final - state.previous;
+    // تاریخ آخرین به‌روزرسانی قیمت (قیمتِ تأییدشده تا ۷ روز برای همه‌ی مشتری‌ها معتبر است)
+    const updatedOn = state.confirmedAt ? formatFaDate(state.confirmedAt) : "";
+    const validUntil = formatFaDate(state.lockedUntil);
+    const dateNote = updatedOn ? (
+      <div className="mt-3 pt-3 border-t border-black/5 text-sm leading-relaxed text-text-dark/80">
+        <p className="flex items-start gap-1.5">
+          <CalendarCheck className="w-4 h-4 mt-0.5 shrink-0 text-green-600" aria-hidden="true" />
+          <span>
+            قیمت این محصول در تاریخ <strong>{updatedOn}</strong> به‌روزرسانی شده است؛ می‌توانید با خیال راحت خرید کنید.
+          </span>
+        </p>
+        {validUntil && <p className="mt-1 text-gray-500">اعتبار این قیمت تا {validUntil}</p>}
+      </div>
+    ) : null;
     if (diff === 0) {
       return (
         <div role="status" aria-live="polite" className="w-full bg-mint-green border border-green-200 rounded-2xl p-4">
@@ -55,6 +70,7 @@ export default function PriceBox({ state, currentPrice, busy, storeOpen, onAsk }
           <p className="mt-1">
             <Toman value={state.final} big />
           </p>
+          {dateNote}
         </div>
       );
     }
@@ -80,6 +96,7 @@ export default function PriceBox({ state, currentPrice, busy, storeOpen, onAsk }
         <p className={`text-sm font-bold mt-1 ${up ? "text-amber-700" : "text-green-700"}`}>
           {formatNumber(Math.abs(diff))} تومان {up ? "بیشتر از قبل" : "ارزان‌تر از قبل"}
         </p>
+        {dateNote}
       </div>
     );
   }
